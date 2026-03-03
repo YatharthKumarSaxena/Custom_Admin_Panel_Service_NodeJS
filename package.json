@@ -1,0 +1,12 @@
+{
+  "name": "custom_admin_panel_service",
+  "version": "1.0.0",
+  "description": "This is the Custom Admin Panel Service which is a Microservice highly compatible with Other Microservices like Custom Auth Service and Software Management Service\"",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Yatharth Kumar Saxena",
+  "license": "ISC"
+}
