@@ -32,12 +32,12 @@ const throwMissingFieldsError = (res,resource) =>{
   Handles all credentials failure responses.
 */
 
-const throwInvalidResourceError = (res,resource,reason) => {
+const throwUnauthorizedError = (res,resource,reason) => {
     logWithTime("⚠️ Invalid "+resource);
     logWithTime("❌ Invalid Credentials! Please try again.");
     return res.status(UNAUTHORIZED).json({
         success: false,
-        type: "InvalidResource",
+        type: "Unauthorized",
         resource: resource,
         reason: reason,
         warning: "Invalid "+ resource + " Entered",
@@ -126,7 +126,7 @@ const throwValidationError = (res, errors) => {
 const throwInternalServerError = (res,error) => {
     if (error.name === 'ValidationError') {
       logWithTime(`⚠️ Validation Error: ${error.message}`);
-      return throwBadRequestError(res, error.message);
+      return throwValidationError(res, error.errors);
     }
     errorMessage(error);
     logWithTime("💥 Internal Server Error occurred.");
@@ -179,7 +179,7 @@ const throwFeatureDisabledError = (res, featureName, reason = "This feature is c
 module.exports = {
     throwMissingFieldsError,
     throwInternalServerError,
-    throwInvalidResourceError,
+    throwUnauthorizedError,
     throwAccessDeniedError,
     throwConflictError,
     throwDBResourceNotFoundError,
