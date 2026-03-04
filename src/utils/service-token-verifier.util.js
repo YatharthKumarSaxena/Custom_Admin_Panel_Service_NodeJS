@@ -1,13 +1,16 @@
 const jwt = require("jsonwebtoken");
-const { SERVICE_TOKEN_SECRET, ALLOWED_SERVICE_NAMES } = require("@configs/security.config");
+const { service } = require("@configs/security.config");
 const { logWithTime } = require("@utils/time-stamps.util");
+const { ALLOWED_SERVICE_NAMES, algorithms } = service;
 
 /**
  * Verifies a service token's JWT signature and structure
  * @param {string} token - The JWT token to verify
+ * @param {string} SERVICE_TOKEN_SECRET - The secret used to verify the token
  * @returns {Object} { success: boolean, decoded: Object|null, error: string|null }
  */
-const verifyServiceToken = (token) => {
+
+const verifyServiceToken = (token, SERVICE_TOKEN_SECRET) => {
   try {
     if (!token || token.trim() === "") {
       return {
@@ -19,7 +22,7 @@ const verifyServiceToken = (token) => {
 
     // Verify JWT signature and decode
     const decoded = jwt.verify(token, SERVICE_TOKEN_SECRET, {
-      algorithms: ["HS256"]
+      algorithms: algorithms
     });
 
     // Validate token type
@@ -40,7 +43,7 @@ const verifyServiceToken = (token) => {
       };
     }
 
-    logWithTime(`✅ Service token verified: ${decoded.serviceName} (${decoded.serviceInstanceId})`);
+    logWithTime(`✅ Service token verified: ${decoded.serviceName}`);
 
     return {
       success: true,
@@ -80,8 +83,8 @@ const verifyServiceToken = (token) => {
  * @param {Array<string>} allowedServices - Optional list of allowed services (overrides global config)
  * @returns {Object} { isValid: boolean, error: string|null }
  */
-const validateServiceName = (serviceName, allowedServices = null) => {
-  const serviceList = allowedServices || ALLOWED_SERVICE_NAMES;
+const validateServiceName = (serviceName) => {
+  const serviceList = ALLOWED_SERVICE_NAMES;
 
   // If no allowed services configured, allow all
   if (!serviceList || serviceList.length === 0) {
@@ -94,43 +97,11 @@ const validateServiceName = (serviceName, allowedServices = null) => {
       error: `Service '${serviceName}' is not in the allowed services list`
     };
   }
-
+  
   return { isValid: true, error: null };
-};
-
-/**
- * Combined verification: Verifies token AND validates service name
- * @param {string} token - The JWT token to verify
- * @param {Array<string>} allowedServices - Optional list of allowed services
- * @returns {Object} { success: boolean, decoded: Object|null, error: string|null }
- */
-const verifyAndValidateServiceToken = (token, allowedServices = null) => {
-  // Step 1: Verify token
-  const verificationResult = verifyServiceToken(token);
-
-  if (!verificationResult.success) {
-    return verificationResult;
-  }
-
-  // Step 2: Validate service name
-  const validationResult = validateServiceName(
-    verificationResult.decoded.serviceName,
-    allowedServices
-  );
-
-  if (!validationResult.isValid) {
-    return {
-      success: false,
-      decoded: null,
-      error: validationResult.error
-    };
-  }
-
-  return verificationResult;
 };
 
 module.exports = {
   verifyServiceToken,
-  validateServiceName,
-  verifyAndValidateServiceToken
+  validateServiceName
 };
