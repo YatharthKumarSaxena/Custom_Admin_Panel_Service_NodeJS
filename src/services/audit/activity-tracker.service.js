@@ -94,9 +94,8 @@ const logActivityTrackerEvent = (
         baseLog.adminActions = adminActions;
       }
 
-      // Save
-      const result = new ActivityTrackerModel(baseLog);
-      await result.save();
+      // Save atomically using create()
+      await ActivityTrackerModel.create(baseLog);
 
       logWithTime(
         `📘 ActivityTracker saved: ${eventType} | Admin: ${admin.adminId} | deviceUUID: ${device.deviceUUID} | requestId: ${requestId}`
