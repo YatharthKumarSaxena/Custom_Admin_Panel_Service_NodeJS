@@ -68,7 +68,6 @@ const initializeMicroservice = async () => {
             const healthStatus = await healthCheck();
             
             if (healthStatus.success) {
-                logWithTime('✅ Custom Auth Service is reachable');
             } else {
                 logWithTime('⚠️  Custom Auth Service is not reachable - authentication features may not work');
             }
@@ -82,8 +81,7 @@ const initializeMicroservice = async () => {
             const { healthCheck } = internal.clients.softwareManagementClient;
             const healthStatus = await healthCheck();
             
-            if (healthStatus) {
-                logWithTime('✅ Software Management Service is reachable');
+            if (healthStatus.success) {
             } else {
                 logWithTime('⚠️  Software Management Service is not reachable - license features may not work');
             }
