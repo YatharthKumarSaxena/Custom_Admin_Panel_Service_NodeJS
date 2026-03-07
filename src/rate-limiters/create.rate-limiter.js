@@ -20,8 +20,8 @@ const createRateLimiter = ({ maxRequests, windowMs, message }) => {
     }),
     
     keyGenerator: (req) => {
-      const adminId = req.admin?.adminId; 
-      const deviceId = req.deviceId;     
+      const adminId = req?.admin?.adminId || req?.user?.userId; 
+      const deviceId = req.device.deviceUUID;     
       const path = req.originalUrl || req.url;
 
       // Note: Make sure this middleware runs AFTER auth/device middleware
