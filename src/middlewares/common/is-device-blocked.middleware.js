@@ -11,12 +11,12 @@ const isDeviceBlocked = async (req, res, next) => {
         // Agar deviceType header se aaya hai to DB me update karo
         if (req.device.deviceType) {
             update.deviceType = req.device.deviceType;
-        }logWithTime, logMiddlewareError
+        }
 
         const dbDevice = await DeviceModel.findOneAndUpdate(
             { deviceUUID: req.device.deviceUUID },
             update,
-            { new: true, lean: true }
+            { returnDocument: 'after', lean: true }
         );
 
         let device = req.device;
