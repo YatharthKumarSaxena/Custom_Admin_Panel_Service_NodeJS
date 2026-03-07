@@ -73,7 +73,7 @@ const deviceSchema = new mongoose.Schema({
 }, { timestamps: true, versionKey: false });
 
 /* 🔐 Block / Unblock Integrity */
-deviceSchema.pre("validate", function (next) {
+deviceSchema.pre("validate", function () {
 
     if (this.isBlocked && !this.blockedAt) {
         this.blockedAt = new Date();
@@ -85,14 +85,13 @@ deviceSchema.pre("validate", function (next) {
 
     if (this.isBlocked) {
         if (!this.blockReason || !this.blockedBy) {
-            return next(new Error("Blocked device must have blockReason and blockedBy."));
+            throw new Error("Blocked device must have blockReason and blockedBy.");
         }
     } else {
         if (this.unblockReason && !this.unblockedBy) {
-            return next(new Error("Unblocked device must have unblockedBy when unblockReason is set."));
+            throw new Error("Unblocked device must have unblockedBy when unblockReason is set.");
         }
     }
-    next();
 });
 
 /* 🔁 Counters & Timestamps */
