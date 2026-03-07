@@ -47,6 +47,24 @@ const throwUnauthorizedError = (res,resource,reason) => {
 
 /*
   SRP + DRY: 
+  Handles all credentials failure responses.
+*/
+
+const throwInvalidResourceError = (res,resource,reason) => {
+    logWithTime("⚠️ Invalid "+resource);
+    logWithTime("❌ Invalid Credentials! Please try again.");
+    return res.status(UNAUTHORIZED).json({
+        success: false,
+        type: "InvalidResource",
+        resource: resource,
+        reason: reason,
+        warning: "Invalid "+ resource + " Entered",
+        message: "Please enter a Valid "+ resource
+    })
+}
+
+/*
+  SRP + DRY: 
   Handles Access Denied or Blocked Account responses.
 */
 
@@ -186,6 +204,7 @@ module.exports = {
     throwSessionExpiredError,
     throwBadRequestError,
     throwValidationError,
+    throwInvalidResourceError,
     throwSpecificInternalServerError,
     throwTooManyRequestsError,
     throwFeatureDisabledError,
