@@ -1,11 +1,10 @@
 const mongoose = require("mongoose");
 const { firstNameLength, notesFieldLength } = require("@configs/fields-length.config");
 const { FirstNameFieldSetting, UserTypes, ClientStatus } = require("@configs/enums.config");
-const { BlockUserReasons, UnblockUserReasons, ClientRevertReasons } = require("@configs/reasons.config");
-const { firstNameRegex, userIdRegex, adminIdRegex, clientIdRegex } = require("@configs/regex.config");
+const { BlockUserReasons, UnblockUserReasons, ClientRevertReasons, ClientCreationReasons, ConvertUserToClientReasons } = require("@configs/reasons.config");
+const { firstNameRegex, customIdRegex } = require("@configs/regex.config");
 const { FIRST_NAME_SETTING } = require("@configs/security.config");
 const { DB_COLLECTIONS } = require("@/configs/db-collections.config");
-const { ClientCreationReasons } = require("@configs/reasons.config")
 
 /* User Schema */
 const userSchema = new mongoose.Schema({
@@ -15,10 +14,10 @@ const userSchema = new mongoose.Schema({
         immutable: true,
         validate: {
             validator: function(v) {
-                // Accept both user IDs (USR*) and client IDs (CLI*)
-                return userIdRegex.test(v) || clientIdRegex.test(v);
+                // All IDs now use USR prefix - unified pattern
+                return customIdRegex.test(v);
             },
-            message: 'userId must match either user (USR*) or client (CLI*) format'
+            message: 'userId must match USR format (USR0000000)'
         },
         index: true
     },
@@ -44,7 +43,7 @@ const userSchema = new mongoose.Schema({
     convertedToClientBy: {
         type: String,
         default: null,
-        match: adminIdRegex
+        match: customIdRegex
     },
     convertedToClientAt: {
         type: Date,
@@ -52,7 +51,7 @@ const userSchema = new mongoose.Schema({
     },
     clientCreationReason: {
         type: String,
-        enum: Object.values(ClientCreationReasons),
+        enum: [...Object.values(ClientCreationReasons), ...Object.values(ConvertUserToClientReasons)],
         default: null
     },
     clientRevertReason: {
@@ -69,7 +68,7 @@ const userSchema = new mongoose.Schema({
     clientRevertedBy: {
         type: String,
         default: null,
-        match: adminIdRegex
+        match: customIdRegex
     },
     clientRevertedAt: {
         type: Date,
@@ -77,12 +76,12 @@ const userSchema = new mongoose.Schema({
     },
     isBlocked: { type: Boolean, default: false },
     blockReason: { type: String, enum: Object.values(BlockUserReasons), default: null },
-    blockedBy: { type: String, default: null, match: adminIdRegex },
+    blockedBy: { type: String, default: null, match: customIdRegex },
     blockReasonDetails: { type: String, minlength: notesFieldLength.min, maxlength: notesFieldLength.max, default: null },
     blockCount: { type: Number, default: 0 },
     unblockReason: { type: String, enum: Object.values(UnblockUserReasons), default: null },
     unblockReasonDetails: { type: String, minlength: notesFieldLength.min, maxlength: notesFieldLength.max, default: null },
-    unblockedBy: { type: String, default: null, match: adminIdRegex },
+    unblockedBy: { type: String, default: null, match: customIdRegex },
     blockedAt: { type: Date, default: null },
     unblockedAt: { type: Date, default: null }
 }, { timestamps: true, versionKey: false });

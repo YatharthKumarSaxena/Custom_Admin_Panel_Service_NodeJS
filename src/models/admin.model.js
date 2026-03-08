@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { firstNameLength } = require("@configs/fields-length.config");
 const { AdminTypes, FirstNameFieldSetting } = require("@configs/enums.config");
 const { ActivationReasons, DeactivationReasons, UnsuspensionReasons, SuspensionReasons, BlockAdminReasons, UnblockAdminReasons } = require("@/configs/reasons.config");
-const { firstNameRegex, adminIdRegex } = require("@configs/regex.config");
+const { firstNameRegex, customIdRegex } = require("@configs/regex.config");
 const { FIRST_NAME_SETTING } = require("@configs/security.config");
 const { DB_COLLECTIONS } = require("@/configs/db-collections.config");
 
@@ -13,7 +13,7 @@ const adminSchema = new mongoose.Schema({
         type: String,
         unique: true,
         immutable: true,
-        match: adminIdRegex,
+        match: customIdRegex,
         index: true
     },
 
@@ -34,13 +34,13 @@ const adminSchema = new mongoose.Schema({
 
     activatedBy: {
         type: String,
-        match: adminIdRegex,
+        match: customIdRegex,
         default: null
     },
 
     deactivatedBy: {
         type: String,
-        match: adminIdRegex,
+        match: customIdRegex,
         default: null
     },
 
@@ -70,7 +70,7 @@ const adminSchema = new mongoose.Schema({
 
     suspendedBy: {
         type: String,
-        match: adminIdRegex,
+        match: customIdRegex,
         default: null
     },
 
@@ -87,7 +87,7 @@ const adminSchema = new mongoose.Schema({
 
     unsuspendedBy: {
         type: String,
-        match: adminIdRegex,
+        match: customIdRegex,
         default: null
     },
 
@@ -116,7 +116,7 @@ const adminSchema = new mongoose.Schema({
 
     blockedBy: {
         type: String,
-        match: adminIdRegex,
+        match: customIdRegex,
         default: null
     },
 
@@ -138,7 +138,7 @@ const adminSchema = new mongoose.Schema({
 
     unblockedBy: {
         type: String,
-        match: adminIdRegex,
+        match: customIdRegex,
         default: null
     },
 
@@ -158,19 +158,19 @@ const adminSchema = new mongoose.Schema({
 
     supervisorId: {
         type: String,
-        match: adminIdRegex,
+        match: customIdRegex,
         default: null
     },
 
     createdBy: {
         type: String,
         default: null,
-        match: adminIdRegex
+        match: customIdRegex
     },
 
     updatedBy: {
         type: String,
-        match: adminIdRegex,
+        match: customIdRegex,
         default: null
     }
 
