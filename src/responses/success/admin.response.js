@@ -34,9 +34,25 @@ const createUserSuccessResponse = (res, user) => {
     });
 };
 
+const convertUserToClientSuccessResponse = (res, user) => {
+    return res.status(OK).json({
+        success: true,
+        message: "User successfully converted to client.",
+        data: {
+            userId: user.userId,
+            firstName: user.firstName,
+            userType: user.userType,
+            clientStatus: user.clientStatus,
+            convertedToClientBy: user.convertedToClientBy,
+            convertedToClientAt: user.convertedToClientAt
+        }
+    });
+};
+
 const adminSuccessResponses = {
     createAdminSuccessResponse,
-    createUserSuccessResponse
+    createUserSuccessResponse,
+    convertUserToClientSuccessResponse
 }
 
 module.exports = {
