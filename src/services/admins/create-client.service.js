@@ -10,6 +10,7 @@ const { createInternalServiceClient } = require("@/utils/internal-service-client
 const { getServiceToken } = require("@/internals/service-token");
 const { AUTH_SERVICE_URIS, SOFTWARE_MANAGEMENT_URIS } = require("@/configs/internal-uri.config");
 const { INTERNAL_API, SERVICE_NAMES } = require("@/internals/constants");
+const { errorMessage } = require("@/utils/log-error.util");
 
 /**
  * Create Client Service
@@ -19,13 +20,50 @@ const { INTERNAL_API, SERVICE_NAMES } = require("@/internals/constants");
  * @param {string} requestId - Request ID for tracking
  * @returns {Promise<{success: boolean, data?: Object, type?: string, message?: string}>}
  */
+
+const createClientInSoftwareManagementService = async (clientId, firstName, role) => {
+    try {
+        // Create Client in Software Management Service
+        const serviceToken = await getServiceToken(SERVICE_NAMES.ADMIN_PANEL_SERVICE);
+        logWithTime(`🔄 Creating client account in Software Management Service...`);
+        const softwareManagementClient = createInternalServiceClient(
+            INTERNAL_API.SOFTWARE_MANAGEMENT_BASE_URL,
+            serviceToken,
+            SERVICE_NAMES.ADMIN_PANEL_SERVICE,
+            INTERNAL_API.TIMEOUT,
+            INTERNAL_API.RETRY_ATTEMPTS,
+            INTERNAL_API.RETRY_DELAY
+        );
+        const id = clientId; // Use the same ID for consistency across services
+        const smsResult = await softwareManagementClient.callService({
+            method: SOFTWARE_MANAGEMENT_URIS.CREATE_USER.method,
+            uri: SOFTWARE_MANAGEMENT_URIS.CREATE_USER.uri,
+            body: {
+                type: "user",
+                firstName,
+                id,
+                role
+            }
+        });
+
+        if (!smsResult.success) {
+            logWithTime(`❌ Software Management Service failed to create client: ${smsResult.error}`);
+        } else {
+            logWithTime(`✅ Client account created in Software Management Service: ${clientId}`);
+        }
+    } catch (error) {
+        logWithTime(`❌ Error in createClientInSoftwareManagementService`);
+        errorMessage(error);
+    }
+}
+
 const createClientService = async (creatorAdmin, clientData, device, requestId) => {
     try {
         const { firstName, creationReason, email, password, countryCode, localNumber, phone, role } = clientData;
 
         // Create Client In Auth Service and get Client Id
         logWithTime(`🔄 Creating client account in Auth Service...`);
-        
+
         const serviceToken = await getServiceToken(SERVICE_NAMES.ADMIN_PANEL_SERVICE);
         const authClient = createInternalServiceClient(
             INTERNAL_API.CUSTOM_AUTH_SERVICE_URL,
@@ -60,7 +98,7 @@ const createClientService = async (creatorAdmin, clientData, device, requestId) 
         }
 
         const clientId = authResult.data?.data?.userId || authResult.data?.userId;
-        
+
         if (!clientId) {
             logWithTime(`❌ Auth Service did not return clientId`);
             return {
@@ -68,52 +106,34 @@ const createClientService = async (creatorAdmin, clientData, device, requestId) 
                 type: AdminErrorTypes.INVALID_DATA,
                 message: "Auth Service did not return client ID"
             };
-        } else {
-            // Create Client in Software Management Service
-            logWithTime(`🔄 Creating client account in Software Management Service...`);
-            const softwareManagementClient = createInternalServiceClient(
-                INTERNAL_API.SOFTWARE_MANAGEMENT_BASE_URL,
-                serviceToken,
-                SERVICE_NAMES.ADMIN_PANEL_SERVICE,
-                INTERNAL_API.TIMEOUT,
-                INTERNAL_API.RETRY_ATTEMPTS,
-                INTERNAL_API.RETRY_DELAY
-            );
-            const id = clientId; // Use the same ID for consistency across services
-            const smsResult = await softwareManagementClient.callService({
-                method: SOFTWARE_MANAGEMENT_URIS.CREATE_USER.method,
-                uri: SOFTWARE_MANAGEMENT_URIS.CREATE_USER.uri,
-                body: {
-                    type: "user",
-                    firstName,
-                    id,
-                    role
-                }
-            });
-
-            if (!smsResult.success) {
-                logWithTime(`❌ Software Management Service failed to create client: ${smsResult.error}`);
-            } else {
-                logWithTime(`✅ Client account created in Software Management Service: ${clientId}`);
-            }
         }
 
         logWithTime(`✅ Client account created in Auth Service: ${clientId}`);
 
-        // Create new client with all required fields
-        const newClient = new UserModel({
-            userId: clientId,
-            firstName,
-            userType: UserTypes.CLIENT,
-            clientStatus: ClientStatus.ACTIVE, // New clients are active by default
-            convertedToClientBy: creatorAdmin.adminId, // Admin who created the client
-            convertedToClientAt: new Date(), // Timestamp of creation
-            clientCreationReason: creationReason // Reason from request body
-        });
-
-        await newClient.save();
+        // Upsert client: Update if SYNC_USER already created it, or Insert if it doesn't exist yet
+        const newClient = await UserModel.findOneAndUpdate(
+            { userId: clientId },
+            {
+                $set: {
+                    firstName,
+                    userType: UserTypes.CLIENT,
+                    clientStatus: ClientStatus.ACTIVE,
+                    convertedToClientBy: creatorAdmin.adminId,
+                    convertedToClientAt: new Date(),
+                    clientCreationReason: creationReason
+                }
+            },
+            {
+                new: true,          // Returns the updated document
+                upsert: true,       // Creates it if SYNC_USER hasn't fired yet
+                runValidators: true // Runs your schema validators
+            }
+        );
 
         logWithTime(`✅ Client created in DB: ${newClient.userId}`);
+
+        // Create client in Software Management Service (fire and forget - we don't want to fail the whole process if this fails)
+        createClientInSoftwareManagementService(clientId, firstName, role);
 
         // Log activity
         logActivityTrackerEvent(
@@ -122,18 +142,18 @@ const createClientService = async (creatorAdmin, clientData, device, requestId) 
             requestId,
             ACTIVITY_TRACKER_EVENTS.CREATE_CLIENT,
             `Created client ${newClient.userId}`,
-            { 
-                newData: { 
-                    userId: newClient.userId, 
-                    userType: newClient.userType, 
-                    firstName, 
+            {
+                newData: {
+                    userId: newClient.userId,
+                    userType: newClient.userType,
+                    firstName,
                     clientStatus: newClient.clientStatus,
                     clientCreationReason: creationReason
                 },
-                adminActions: { 
-                    targetId: newClient.userId, 
-                    reason: creationReason 
-                } 
+                adminActions: {
+                    targetId: newClient.userId,
+                    reason: creationReason
+                }
             }
         );
 
@@ -150,7 +170,7 @@ const createClientService = async (creatorAdmin, clientData, device, requestId) 
 
     } catch (error) {
         logWithTime(`❌ Create client service error: ${error.message}`);
-        
+
         if (error.code === 11000) {
             return {
                 success: false,
@@ -167,4 +187,7 @@ const createClientService = async (creatorAdmin, clientData, device, requestId) 
     }
 };
 
-module.exports = { createClientService };
+module.exports = { 
+    createClientService,
+    createClientInSoftwareManagementService
+};
