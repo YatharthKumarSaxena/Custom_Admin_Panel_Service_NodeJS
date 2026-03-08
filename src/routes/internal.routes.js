@@ -7,6 +7,7 @@
 
 const express = require("express");
 const { createSuperAdminController } = require("@controllers/internals/create-super-admin.controller");
+const { createUser } = require("@controllers/internals/create-user.controller");
 const {
   sendAuthServiceHealthSuccess,
   sendSoftwareServiceHealthSuccess,
@@ -61,6 +62,8 @@ if (!microserviceConfig.enabled) {
     internalRouter.get(PROVIDE_HEALTH_CHECK_TO_SOFTWARE_SERVICE, softwareManagementInternalMiddlewares, (req, res) => {
       return sendSoftwareServiceHealthSuccess(res, req.serviceAuth);
     });
+
+    internalRouter.post(INTERNAL_ROUTES.CREATE_USER, authInternalMiddlewares, createUser);
 
     module.exports = {
       internalRouter

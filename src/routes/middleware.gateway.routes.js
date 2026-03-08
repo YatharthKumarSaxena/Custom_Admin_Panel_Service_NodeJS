@@ -25,7 +25,6 @@ const baseAuthMiddlewares = [
 
 const baseAuthAdminMiddlewares = [
     ...baseAuthMiddlewares,
-    adminMiddlewares.checkAdminMiddleware,
     adminMiddlewares.fetchRequestAdmin,
     ...accountStatusMiddlewares
 ];
