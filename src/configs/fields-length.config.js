@@ -48,5 +48,21 @@ module.exports = {
   passwordLength: {
     min: 8,
     max: 64
+  },
+  orgNameLength: {
+    min: 2,
+    max: 120
+  },
+  descriptionLength: {
+    min: 10,
+    max: 500
+  },
+  orgRoleLength: {
+    min: 3,
+    max: 50
+  },
+  urlLength: {
+    min: 8,
+    max: 2048
   }
 };

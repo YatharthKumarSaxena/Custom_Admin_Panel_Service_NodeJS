@@ -152,7 +152,8 @@ const RequestLocation = Object.freeze({
 
 const ClientTypes = Object.freeze({
     INDIVIDUAL: "individual",
-    ORGANIZATION: "organization"
+    ORGANIZATION: "organization",
+    MULTI_ORGANIZATION: "multi_organization"
 });
 
 const AdminRoleTypes = Object.freeze({
@@ -175,6 +176,15 @@ const ClientRoleTypes = Object.freeze({
 const TotalTypes = Object.freeze({
   ...UserTypes,
   ADMIN: "ADMIN"
+});
+
+const OrganizationTypes = Object.freeze({
+    FINTECH: "FINTECH",
+    EDTECH: "EDTECH",
+    HEALTHTECH: "HEALTHTECH",
+    ECOMMERCE: "ECOMMERCE",
+    SAAS: "SAAS",
+    OTHER: "OTHER"
 });
 
 module.exports = {
@@ -202,5 +212,6 @@ module.exports = {
   ClientTypes,
   AdminRoleTypes,
   ClientRoleTypes,
-  TotalTypes
+  TotalTypes,
+  OrganizationTypes
 };

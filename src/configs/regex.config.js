@@ -8,5 +8,8 @@ module.exports = {
     mongoIdRegex: /^[a-f\d]{24}$/i,
     customIdRegex: /^USR[0-9]{7}$/,
     requestIdRegex: /^REQ[0-9]{10}$/,
-    strongPasswordRegex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&^])[A-Za-z\d@$!%*#?&^ ]{8,}$/
+    strongPasswordRegex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&^])[A-Za-z\d@$!%*#?&^ ]{8,}$/,
+    urlRegex: /^(https?:\/\/)?([\w\d\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/,
+    orgRoleRegex: /^[a-zA-Z\s-]+$/,
+    orgNameRegex: /^[a-zA-Z0-9\s.&()-]+$/
 }

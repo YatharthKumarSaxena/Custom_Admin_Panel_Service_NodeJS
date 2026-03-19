@@ -282,6 +282,102 @@ const UnsuspensionReasons = Object.freeze({
   OTHER: "other"
 });
 
+const OrganizationCreationReasons = Object.freeze({
+  NEW_ORGANIZATION: "new_organization",
+  MERGER: "merger",
+  ACQUISITION: "acquisition",
+  REORGANIZATION: "reorganization",
+  ADMIN_REQUEST: "admin_request",
+  OTHER: "other"
+});
+
+const OrganizationUpdateReasons = Object.freeze({
+  REBRANDING: "rebranding",
+  CONTACT_INFO_UPDATE: "contact_info_update",
+  ROLE_CHANGE: "role_change",
+  ERROR_CORRECTION: "error_correction",
+  ADMIN_REQUEST: "admin_request",
+  COMPLIANCE_UPDATE: "compliance_update",
+  OTHER: "other"
+});
+
+const OrganizationDeletionReasons = Object.freeze({
+  OUT_OF_BUSINESS: "out_of_business",
+  MERGER: "merger",
+  ACQUISITION: "acquisition",
+  REORGANIZATION: "reorganization",
+  ADMIN_REQUEST: "admin_request",
+  OTHER: "other"
+});
+
+const OrganizationalUserCreationReasons = Object.freeze({
+  NEW_EMPLOYEE: "new_employee",
+  ROLE_CHANGE: "role_change",
+  DEPARTMENT_TRANSFER: "department_transfer",
+  TEMPORARY_ASSIGNMENT: "temporary_assignment",
+  ADMIN_REQUEST: "admin_request",
+  OTHER: "other"
+});
+
+const OrganizationalUserUpdateReasons = Object.freeze({
+  CONTACT_INFO_UPDATE: "contact_info_update",
+  ROLE_CHANGE: "role_change",
+  DEPARTMENT_TRANSFER: "department_transfer",
+  TEMPORARY_ASSIGNMENT: "temporary_assignment",
+  ADMIN_REQUEST: "admin_request",
+  OTHER: "other"
+});
+
+const OrganizationalUserDeletionReasons = Object.freeze({
+  RESIGNED: "resigned",
+  TERMINATED: "terminated",
+  DEPARTMENT_TRANSFER: "department_transfer",
+  TEMPORARY_ASSIGNMENT_ENDED: "temporary_assignment_ended",
+  ADMIN_REQUEST: "admin_request",
+  OTHER: "other"
+});
+
+const OrganizationDisablitionReasons = Object.freeze({
+  POLICY_VIOLATION: "policy_violation",
+  SUSPENDED_FOR_REVIEW: "suspended_for_review",
+  INACTIVITY: "inactivity",
+  COMPLIANCE_ISSUE: "compliance_issue",
+  UNAUTHORIZED_ACTIVITY: "unauthorized_activity",
+  ADMIN_REQUEST: "admin_request",
+  TEMPORARY_SUSPENSION: "temporary_suspension",
+  OTHER: "other"
+});
+
+const OrganizationEnableReasons = Object.freeze({
+  REVIEW_COMPLETED: "review_completed",
+  SUSPENSION_PERIOD_ENDED: "suspension_period_ended",
+  ISSUE_RESOLVED: "issue_resolved",
+  APPEAL_APPROVED: "appeal_approved",
+  COMPLIANCE_VERIFIED: "compliance_verified",
+  ADMIN_DECISION: "admin_decision",
+  OTHER: "other"
+});
+
+const OrganizationalUserDisablitionReasons = Object.freeze({
+  PERFORMANCE_ISSUE: "performance_issue",
+  POLICY_VIOLATION: "policy_violation",
+  TEMPORARY_SUSPENSION: "temporary_suspension",
+  ACCOUNT_COMPROMISED: "account_compromised",
+  ADMIN_REQUEST: "admin_request",
+  INACTIVITY: "inactivity",
+  OTHER: "other"
+});
+
+const OrganizationalUserEnableReasons = Object.freeze({
+  PERFORMANCE_IMPROVED: "performance_improved",
+  SUSPENSION_ENDED: "suspension_ended",
+  ACCOUNT_SECURED: "account_secured",
+  APPEAL_APPROVED: "appeal_approved",
+  ADMIN_DECISION: "admin_decision",
+  REACTIVATION: "reactivation",
+  OTHER: "other"
+});
+
 module.exports = {
   BlockUserReasons,
   UnblockUserReasons,
@@ -311,5 +407,15 @@ module.exports = {
   SuspensionReasons,
   UnsuspensionReasons,
   BlockAdminReasons,
-  UnblockAdminReasons
+  UnblockAdminReasons,
+  OrganizationCreationReasons,
+  OrganizationUpdateReasons,
+  OrganizationDeletionReasons,
+  OrganizationDisablitionReasons,
+  OrganizationEnableReasons,
+  OrganizationalUserCreationReasons,
+  OrganizationalUserUpdateReasons,
+  OrganizationalUserDeletionReasons,
+  OrganizationalUserDisablitionReasons,
+  OrganizationalUserEnableReasons
 };

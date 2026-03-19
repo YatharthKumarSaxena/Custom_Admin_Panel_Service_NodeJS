@@ -14,14 +14,29 @@
 const { getRequiredFields } = require("@/utils/field-definition.util");
 const { FieldDefinitions } = require("./field-definitions.config");
 
-// AUTO-GENERATED REQUIRED FIELDS
+const requiredFields = {
+    createAdminField: getRequiredFields(FieldDefinitions.CREATE_ADMIN),
+    createClientField: getRequiredFields(FieldDefinitions.CREATE_CLIENT),
+    convertUserToClientField: getRequiredFields(FieldDefinitions.CONVERT_USER_TO_CLIENT),
+    blockAdminField: getRequiredFields(FieldDefinitions.BLOCK_ADMIN),
+    unblockAdminField: getRequiredFields(FieldDefinitions.UNBLOCK_ADMIN),
+    blockUserField: getRequiredFields(FieldDefinitions.BLOCK_USER),
+    unblockUserField: getRequiredFields(FieldDefinitions.UNBLOCK_USER),
+    blockDeviceField: getRequiredFields(FieldDefinitions.BLOCK_DEVICE),
+    unblockDeviceField: getRequiredFields(FieldDefinitions.UNBLOCK_DEVICE),
 
-const createAdminField = getRequiredFields(FieldDefinitions.CREATE_ADMIN);
-const createUserField = getRequiredFields(FieldDefinitions.CREATE_USER);
-const convertUserToClientField = getRequiredFields(FieldDefinitions.CONVERT_USER_TO_CLIENT);
+    createOrganizationField: getRequiredFields(FieldDefinitions.CREATE_ORGANIZATION),
+    updateOrganizationField: getRequiredFields(FieldDefinitions.UPDATE_ORGANIZATION),
+    deleteOrganizationField: getRequiredFields(FieldDefinitions.DELETE_ORGANIZATION),
+    disableOrganizationField: getRequiredFields(FieldDefinitions.DISABLE_ORGANIZATION),
+    enableOrganizationField: getRequiredFields(FieldDefinitions.ENABLE_ORGANIZATION),
 
+    createOrganizationalUserField: getRequiredFields(FieldDefinitions.CREATE_ORG_USER),
+    updateOrganizationalUserField: getRequiredFields(FieldDefinitions.UPDATE_ORG_USER),
+    deleteOrganizationalUserField: getRequiredFields(FieldDefinitions.DELETE_ORG_USER),
+    disableOrganizationalUserField: getRequiredFields(FieldDefinitions.DISABLE_ORG_USER),
+    enableOrganizationalUserField: getRequiredFields(FieldDefinitions.ENABLE_ORG_USER)
+};
 module.exports = {
-    createAdminField,
-    createUserField,
-    convertUserToClientField
+    requiredFields
 };

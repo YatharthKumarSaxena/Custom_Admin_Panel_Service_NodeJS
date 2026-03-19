@@ -20,6 +20,8 @@ module.exports = {
     MAX_ATTEMPTS: 5,           // 5 baar galat password allow hai
     LOCKOUT_TIME_MINUTES: 15   // Uske baad 15 minute ka ban
   },
+  ALLOW_ADMIN_BLOCKING: getMyEnvAsBool('ALLOW_ADMIN_BLOCKING', true),
+  ALLOW_CLIENT_BLOCKING: getMyEnvAsBool('ALLOW_CLIENT_BLOCKING', false),
   WHITELISTED_DEVICE_UUIDS: getMyEnvAsArray('WHITELISTED_DEVICE_UUIDS'),
   FIRST_NAME_SETTING: getMyEnv('FIRST_NAME_SETTING', 'mandatory'),
   link: {
@@ -49,6 +51,5 @@ module.exports = {
   },
   
   ADMIN_SUSPENSION_ALLOWED: getMyEnvAsBool('ADMIN_SUSPENSION_ALLOWED', true),
-  ADMIN_BLOCKING_ALLOWED: getMyEnvAsBool('ADMIN_BLOCKING_ALLOWED', true),
   ADVANCED_LOGGING_ENABLED: getMyEnvAsBool('ADVANCED_LOGGING_ENABLED', false),
 };
