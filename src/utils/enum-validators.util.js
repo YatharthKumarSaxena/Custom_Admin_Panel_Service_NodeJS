@@ -12,10 +12,31 @@ const {
   AdminTypes,
   AdminRoleTypes,
   ClientRoleTypes,
-  TotalTypes
+  TotalTypes,
+  OrganizationTypes
 } = require("@configs/enums.config");
 
-const { AdminCreationReasons, ClientCreationReasons, ConvertUserToClientReasons } = require("@configs/reasons.config");
+const { 
+  AdminCreationReasons, 
+  ClientCreationReasons, 
+  ConvertUserToClientReasons,
+  BlockAdminReasons,
+  UnblockAdminReasons,
+  BlockUserReasons,
+  UnblockUserReasons,
+  BlockDeviceReasons,
+  UnblockDeviceReasons,
+  OrganizationCreationReasons,
+  OrganizationUpdateReasons,
+  OrganizationDeletionReasons,
+  OrganizationDisablitionReasons,
+  OrganizationEnableReasons,
+  OrganizationalUserCreationReasons,
+  OrganizationalUserUpdateReasons,
+  OrganizationalUserDeletionReasons,
+  OrganizationalUserDisablitionReasons,
+  OrganizationalUserEnableReasons
+ } = require("@configs/reasons.config");
 
 /**
  * Factory to create enum helper with boolean returns
@@ -56,7 +77,24 @@ const ClientRoleTypesHelper = createEnumHelper(ClientRoleTypes, "ClientRoleTypes
 const AdminCreationReasonsHelper = createEnumHelper(AdminCreationReasons, "AdminCreationReasons");
 const ClientCreationReasonsHelper = createEnumHelper(ClientCreationReasons, "ClientCreationReasons");
 const ConvertUserToClientReasonsHelper = createEnumHelper(ConvertUserToClientReasons, "ConvertUserToClientReasons");
+const BlockAdminReasonsHelper = createEnumHelper(BlockAdminReasons, "BlockAdminReasons");
+const UnblockAdminReasonsHelper = createEnumHelper(UnblockAdminReasons, "UnblockAdminReasons");
+const BlockUserReasonsHelper = createEnumHelper(BlockUserReasons, "BlockUserReasons");
+const UnblockUserReasonsHelper = createEnumHelper(UnblockUserReasons, "UnblockUserReasons");
+const BlockDeviceReasonsHelper = createEnumHelper(BlockDeviceReasons, "BlockDeviceReasons");
+const UnblockDeviceReasonsHelper = createEnumHelper(UnblockDeviceReasons, "UnblockDeviceReasons");
 const TotalTypesHelper = createEnumHelper(TotalTypes, "TotalTypes");
+const OrganizationTypesHelper = createEnumHelper(OrganizationTypes, "OrganizationTypes");
+const OrganizationCreationReasonsHelper = createEnumHelper(OrganizationCreationReasons, "OrganizationCreationReasons");
+const OrganizationUpdateReasonsHelper = createEnumHelper(OrganizationUpdateReasons, "OrganizationUpdateReasons");
+const OrganizationDeletionReasonsHelper = createEnumHelper(OrganizationDeletionReasons, "OrganizationDeletionReasons");
+const OrganizationDisablitionReasonsHelper = createEnumHelper(OrganizationDisablitionReasons, "OrganizationDisablitionReasons");
+const OrganizationEnableReasonsHelper = createEnumHelper(OrganizationEnableReasons, "OrganizationEnableReasons");
+const OrganizationalUserCreationReasonsHelper = createEnumHelper(OrganizationalUserCreationReasons, "OrganizationalUserCreationReasons");
+const OrganizationalUserUpdateReasonsHelper = createEnumHelper(OrganizationalUserUpdateReasons, "OrganizationalUserUpdateReasons");
+const OrganizationalUserDeletionReasonsHelper = createEnumHelper(OrganizationalUserDeletionReasons, "OrganizationalUserDeletionReasons");
+const OrganizationalUserDisablitionReasonsHelper = createEnumHelper(OrganizationalUserDisablitionReasons, "OrganizationalUserDisablitionReasons");
+const OrganizationalUserEnableReasonsHelper = createEnumHelper(OrganizationalUserEnableReasons, "OrganizationalUserEnableReasons");
 
 module.exports = {
     DeviceTypeHelper,
@@ -71,5 +109,22 @@ module.exports = {
     AdminCreationReasonsHelper,
     ConvertUserToClientReasonsHelper,
     ClientCreationReasonsHelper,
-    TotalTypesHelper
+    BlockAdminReasonsHelper,
+    UnblockAdminReasonsHelper,
+    BlockUserReasonsHelper,
+    UnblockUserReasonsHelper,
+    BlockDeviceReasonsHelper,
+    UnblockDeviceReasonsHelper,
+    TotalTypesHelper,
+    OrganizationTypesHelper,
+    OrganizationCreationReasonsHelper,
+    OrganizationUpdateReasonsHelper,
+    OrganizationDeletionReasonsHelper,
+    OrganizationDisablitionReasonsHelper,
+    OrganizationEnableReasonsHelper,
+    OrganizationalUserCreationReasonsHelper,
+    OrganizationalUserUpdateReasonsHelper,
+    OrganizationalUserDeletionReasonsHelper,
+    OrganizationalUserDisablitionReasonsHelper,
+    OrganizationalUserEnableReasonsHelper
 };
