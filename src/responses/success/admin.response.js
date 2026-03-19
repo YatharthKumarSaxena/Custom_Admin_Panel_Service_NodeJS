@@ -49,10 +49,42 @@ const convertUserToClientSuccessResponse = (res, user) => {
     });
 };
 
+const blockAdminSuccessResponse = (res, admin) => {
+    return res.status(OK).json({
+        success: true,
+        message: "Admin successfully blocked.",
+        data: {
+            adminId: admin.adminId,
+            firstName: admin.firstName,
+            isBlocked: admin.isBlocked,
+            blockedAt: admin.blockedAt,
+            blockedBy: admin.blockedBy,
+            lastBlockReason: admin.lastBlockReason
+        }
+    });
+};
+
+const unblockAdminSuccessResponse = (res, admin) => {
+    return res.status(OK).json({
+        success: true,
+        message: "Admin successfully unblocked.",
+        data: {
+            adminId: admin.adminId,
+            firstName: admin.firstName,
+            isBlocked: admin.isBlocked,
+            unblockedAt: admin.unblockedAt,
+            unblockedBy: admin.unblockedBy,
+            lastUnblockReason: admin.lastUnblockReason
+        }
+    });
+};
+
 const adminSuccessResponses = {
     createAdminSuccessResponse,
     createUserSuccessResponse,
-    convertUserToClientSuccessResponse
+    convertUserToClientSuccessResponse,
+    blockAdminSuccessResponse,
+    unblockAdminSuccessResponse
 }
 
 module.exports = {
