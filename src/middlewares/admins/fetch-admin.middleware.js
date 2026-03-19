@@ -3,6 +3,7 @@ const { fetchAdmin } = require("@/services/common/fetch-admin.service");
 const { logWithTime } = require("@/utils/time-stamps.util");
 const { logMiddlewareError } = require("@/utils/log-error.util");
 const { throwDBResourceNotFoundError, throwInternalServerError } = require("@/responses/common/error-handler.response");
+const { createDeviceService } = require("@/services/devices/create-device.service");
 
 /**
  * CASE 1: LOGIN / GET DETAILS
@@ -33,6 +34,9 @@ const fetchRequestAdmin = async (req, res, next) => {
         logWithTime(`✅ Request admin fetched: ${foundAdmin.adminId}`);
 
         req.admin = foundAdmin; // Downstream middlewares/controllers ke liye admin attach kar diya
+        
+        createDeviceService(foundAdmin, req.device, req.device, req.requestId);
+
         return next();
     } catch (err) {
         logMiddlewareError("fetchRequestAdmin", `Unexpected error: ${err.message}`, req);

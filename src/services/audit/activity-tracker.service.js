@@ -1,11 +1,72 @@
+const mongoose = require("mongoose");
 const { ActivityTrackerModel } = require("@models/activity-tracker.model");
 const { logWithTime } = require("@utils/time-stamps.util");
 const { errorMessage } = require("@/responses/common/error-handler.response");
 const { ACTIVITY_TRACKER_EVENTS } = require("@/configs/tracker.config");
+const { DB_COLLECTIONS } = require("@/configs/db-collections.config");
+const { descriptionLength } = require("@/configs/fields-length.config");
 const { ACTIVITY_TRACKING_ENABLED, ADVANCED_LOGGING_ENABLED } = require("@/configs/security.config");
 
 /**
- * Logs an authentication / admin activity event (fire-and-forget)
+ * Collections that use MongoDB ObjectId for their primary IDs
+ * These targetIds should be stored as ObjectId in the activity tracker
+ * Note: ADMINS and USERS use String IDs (customIdRegex), not ObjectId
+ */
+const OBJECTID_COLLECTIONS = [
+  DB_COLLECTIONS.ORGANIZATIONS,
+  DB_COLLECTIONS.ORGANIZATION_USERS,
+  DB_COLLECTIONS.DEVICES,
+  DB_COLLECTIONS.SPECIAL_PERMISSIONS,
+  DB_COLLECTIONS.BLOCKED_PERMISSIONS,
+  DB_COLLECTIONS.SERVICE_TOKENS,
+  DB_COLLECTIONS.ADMIN_REQUESTS,
+  DB_COLLECTIONS.ADMIN_STATUS_REQUESTS,
+  DB_COLLECTIONS.ROLE_CHANGE_REQUESTS,
+  DB_COLLECTIONS.PERMISSION_REQUESTS,
+  DB_COLLECTIONS.CLIENT_ONBOARDING_REQUESTS,
+];
+
+/**
+ * Convert targetId to MongoDB ObjectId if needed
+ * @param {string|ObjectId} targetId - The target ID to convert
+ * @param {string} performedOn - The collection name
+ * @returns {ObjectId|string} - Converted or original ID
+ */
+const convertTargetIdIfNeeded = (targetId, performedOn) => {
+  if (!targetId) return null;
+  
+  // If the collection uses ObjectIds, convert string to ObjectId
+  if (OBJECTID_COLLECTIONS.includes(performedOn)) {
+    if (typeof targetId === 'string') {
+      try {
+        return new mongoose.Types.ObjectId(targetId);
+      } catch (err) {
+        logWithTime(`⚠️ Invalid ObjectId format for targetId: ${targetId}`);
+        return null;
+      }
+    }
+  }
+  
+  return targetId;
+};
+
+/**
+ * Validate reasonDescription length
+ * @param {string} reasonDescription - The reason description
+ * @returns {boolean} - True if valid
+ */
+const isValidReasonDescription = (reasonDescription) => {
+  // Empty string or whitespace-only strings are considered invalid/not provided
+  if (!reasonDescription || typeof reasonDescription !== 'string' || reasonDescription.trim() === '') {
+    return false; // Don't set empty values
+  }
+  const { min, max } = descriptionLength;
+  return reasonDescription.length >= min && reasonDescription.length <= max;
+};
+
+/**
+ * Logs an admin activity event (fire-and-forget)
+ * Follows the ActivityTrackerModel schema structure
  */
 const logActivityTrackerEvent = (
   admin,
@@ -19,12 +80,13 @@ const logActivityTrackerEvent = (
     try {
       // Check if activity tracking is enabled
       if (!ACTIVITY_TRACKING_ENABLED) {
-        // Silently skip if disabled
         return;
       }
 
       const validEvents = Object.values(ACTIVITY_TRACKER_EVENTS);
+      const validCollections = Object.values(DB_COLLECTIONS);
 
+      // Validate eventType
       if (!validEvents.includes(eventType)) {
         logWithTime(`⚠️ Invalid eventType: ${eventType}. Skipping activity log.`);
         return;
@@ -36,60 +98,84 @@ const logActivityTrackerEvent = (
         return;
       }
 
-      // Base Log Object (Centralized)
+      // Validate Device UUID
+      if (!device?.deviceUUID) {
+        logWithTime("⚠️ Missing device UUID. Skipping activity log.");
+        return;
+      }
+
+      // Validate requestId
+      if (!requestId) {
+        logWithTime("⚠️ Missing requestId. Skipping activity log.");
+        return;
+      }
+
+      // Base Log Object (matches schema)
       const baseLog = {
         adminId: admin.adminId,
         requestId: requestId,
         deviceUUID: device.deviceUUID,
-        deviceType: device.deviceType,
-        deviceName: device.deviceName,
+        deviceType: device.deviceType || null,
+        deviceName: device.deviceName || null,
         eventType,
-        description:
-          description || `Performed ${eventType} by ${admin.adminId}`,
-        performedBy: admin.adminType,
+        description: description || `Performed ${eventType} by ${admin.adminId}`,
+        performedBy: admin.adminType || null,
         oldData: logOptions.oldData || null,
         newData: logOptions.newData || null,
       };
 
-      // Construct Admin Actions
+      // Process Admin Actions
       const adminActions = {};
+      const { adminActions: adminActionsInput } = logOptions;
 
-      const targetId = logOptions.adminActions?.targetId || null;
-      const reason = logOptions.adminActions?.reason || null;
-      const filter =
-        logOptions.adminActions?.filter;
+      if (adminActionsInput) {
+        const { targetId, performedOn, reason, reasonDescription, queryFilter, filter } = adminActionsInput;
 
-      if (ADVANCED_LOGGING_ENABLED) {
-        const queryFilter = logOptions.adminActions?.queryFilter || null;
+        // Validate and set targetId (convert to ObjectId if needed)
+        if (targetId !== undefined && targetId !== null) {
+          // Validate performedOn when targetId is present
+          if (performedOn && !validCollections.includes(performedOn)) {
+            logWithTime(`⚠️ Invalid performedOn collection: ${performedOn}. Skipping targetId.`);
+          } else {
+            adminActions.targetId = convertTargetIdIfNeeded(targetId, performedOn);
+            if (performedOn) {
+              adminActions.performedOn = performedOn;
+            }
+          }
+        }
 
-        if (queryFilter) {
+        // Validate and set reason
+        if (reason !== undefined && reason !== null) {
+          adminActions.reason = reason;
+          
+          // Set reasonDescription only if reason is present
+          if (reasonDescription !== undefined && reasonDescription !== null) {
+            if (!isValidReasonDescription(reasonDescription)) {
+              logWithTime(
+                `⚠️ reasonDescription length invalid (${descriptionLength.min}-${descriptionLength.max}). Skipping.`
+              );
+            } else {
+              adminActions.reasonDescription = reasonDescription;
+            }
+          }
+        }
+
+        // Add queryFilter if advanced logging is enabled
+        if (ADVANCED_LOGGING_ENABLED && queryFilter !== undefined && queryFilter !== null) {
           adminActions.queryFilter = queryFilter;
         }
-      }
 
-      // Decide performedOn centrally
-      if (targetId) {
-        adminActions.targetId = targetId;
-        adminActions.performedOn = logOptions.adminActions?.performedOn || null;
-      }
-
-      // Reason
-      if (reason) {
-        adminActions.reason = reason;
-      }
-
-      // Filter validation
-      if (Array.isArray(filter)) {
-        const validFilters = filter.filter((f) =>
-          validEvents.includes(f)
-        );
-
-        if (validFilters.length > 0) {
-          adminActions.filter = validFilters;
+        // Validate and set filter array
+        if (Array.isArray(filter) && filter.length > 0) {
+          const validFilters = filter.filter((f) => validEvents.includes(f));
+          
+          if (validFilters.length > 0) {
+            adminActions.filter = validFilters;
+          }
         }
       }
 
-      // Attach only if exists
+      // Attach adminActions only if it has content
       if (Object.keys(adminActions).length > 0) {
         baseLog.adminActions = adminActions;
       }
@@ -98,11 +184,11 @@ const logActivityTrackerEvent = (
       await ActivityTrackerModel.create(baseLog);
 
       logWithTime(
-        `📘 ActivityTracker saved: ${eventType} | Admin: ${admin.adminId} | deviceUUID: ${device.deviceUUID} | requestId: ${requestId}`
+        `📘 ActivityTracker saved: ${eventType} | Admin: ${admin.adminId} | RequestId: ${requestId}`
       );
     } catch (err) {
       logWithTime(
-        `❌ Internal Error saving AuthLog for event: ${eventType}`
+        `❌ Error saving ActivityTracker for event: ${eventType}`
       );
       errorMessage(err);
     }
