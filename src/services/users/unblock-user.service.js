@@ -2,7 +2,7 @@ const { UserModel } = require("@models/user.model");
 const { logWithTime } = require("@utils/time-stamps.util");
 const { logActivityTrackerEvent } = require("@/services/audit/activity-tracker.service");
 const { ACTIVITY_TRACKER_EVENTS } = require("@configs/tracker.config");
-const { AdminErrorTypes } = require("@configs/enums.config");
+const { AdminErrorTypes, UserTypes, TotalTypes } = require("@configs/enums.config");
 const { DB_COLLECTIONS } = require("@/configs/db-collections.config");
 const { prepareAuditData, cloneForAudit } = require("@/utils/audit-data.util");
 const { errorMessage } = require("@/utils/log-error.util");
@@ -10,6 +10,7 @@ const { createInternalServiceClient } = require("@/utils/internal-service-client
 const { getServiceToken } = require("@/internals/service-token");
 const { AUTH_SERVICE_URIS } = require("@/configs/internal-uri.config");
 const { INTERNAL_API, SERVICE_NAMES } = require("@/internals/constants");
+const { toggleBlockUserStatus } = require("@/internals/internal-client/software-management.client");
 
 /**
  * Unblock User Service
@@ -97,6 +98,11 @@ const unblockUserService = async (updaterAdmin, targetUser, unblockReason, reaso
         }
 
         logWithTime(`✅ User unblocked successfully: ${userId}`);
+
+        // Fire-and-forget: Notify Software Management Service ONLY for CLIENT users
+        if (unblockedUser.userType === UserTypes.CLIENT) {
+            toggleBlockUserStatus(userId, updaterAdmin.adminId, TotalTypes.CLIENT, false, requestId);
+        }
 
         // Prepare audit data
         const { oldData, newData } = prepareAuditData(oldUserClone, unblockedUser);

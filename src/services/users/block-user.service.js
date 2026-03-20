@@ -2,7 +2,7 @@ const { UserModel } = require("@models/user.model");
 const { logWithTime } = require("@utils/time-stamps.util");
 const { logActivityTrackerEvent } = require("@/services/audit/activity-tracker.service");
 const { ACTIVITY_TRACKER_EVENTS } = require("@configs/tracker.config");
-const { AdminErrorTypes, UserTypes } = require("@configs/enums.config");
+const { AdminErrorTypes, UserTypes, TotalTypes } = require("@configs/enums.config");
 const { DB_COLLECTIONS } = require("@/configs/db-collections.config");
 const { prepareAuditData, cloneForAudit } = require("@/utils/audit-data.util");
 const { errorMessage } = require("@/utils/log-error.util");
@@ -11,6 +11,7 @@ const { createInternalServiceClient } = require("@/utils/internal-service-client
 const { getServiceToken } = require("@/internals/service-token");
 const { AUTH_SERVICE_URIS } = require("@/configs/internal-uri.config");
 const { INTERNAL_API, SERVICE_NAMES } = require("@/internals/constants");
+const { toggleBlockUserStatus } = require("@/internals/internal-client/software-management.client");
 
 /**
  * Block User Service
@@ -110,6 +111,11 @@ const blockUserService = async (updaterAdmin, targetUser, blockReason, reasonDes
         }
 
         logWithTime(`✅ User blocked successfully: ${userId}`);
+
+        // Fire-and-forget: Notify Software Management Service ONLY for CLIENT users
+        if (blockedUser.userType === UserTypes.CLIENT) {
+            toggleBlockUserStatus(userId, updaterAdmin.adminId, TotalTypes.CLIENT, true, requestId);
+        }
 
         // Prepare audit data
         const { oldData, newData } = prepareAuditData(oldUserClone, blockedUser);
