@@ -15,6 +15,9 @@ const {
 const { INTERNAL_ROUTES } = require("@configs/uri.config");
 const { microserviceConfig } = require("@configs/microservice.config");
 const { authInternalMiddlewares, softwareManagementInternalMiddlewares } = require("./middleware.gateway.routes");
+const { deleteUser } = require("@/controllers/internals/delete-user.controller");
+const { updateUserDetails } = require("@/controllers/internals/update-user.controller");
+const { toggleActiveStatus } = require("@/controllers/internals/toggle-active-status.controller");
 const { CREATE_SUPER_ADMIN, PROVIDE_HEALTH_CHECK_TO_AUTH_SERVICE, PROVIDE_HEALTH_CHECK_TO_SOFTWARE_SERVICE } = INTERNAL_ROUTES;
 const internalRouter = express.Router();
 
@@ -64,6 +67,12 @@ if (!microserviceConfig.enabled) {
     });
 
     internalRouter.post(INTERNAL_ROUTES.CREATE_USER, authInternalMiddlewares, createUser);
+
+    internalRouter.delete(INTERNAL_ROUTES.DELETE_USER, authInternalMiddlewares, deleteUser);
+
+    internalRouter.patch(INTERNAL_ROUTES.UPDATE_USER_DETAILS, authInternalMiddlewares, updateUserDetails);
+
+    internalRouter.patch(INTERNAL_ROUTES.TOGGLE_ACTIVE_STATUS, authInternalMiddlewares, toggleActiveStatus);
 
     module.exports = {
       internalRouter
