@@ -27,7 +27,7 @@ const fetchEntity = async (
   try {
     // Priority 1: userId (direct fetch)
     if (userId) {
-      const query = { [userIdField]: userId };
+      const query = { [userIdField]: userId, isDeleted: false };
       const entity = await Model.findOne(query).lean();
       
       if (entity) {
@@ -43,11 +43,11 @@ const fetchEntity = async (
     let conditions = [];
 
     if (email) {
-      conditions.push({ email });
+      conditions.push({ email, isDeleted: false });
     }
     
     if (phone) {
-      conditions.push({ phone });
+      conditions.push({ phone, isDeleted: false });
     }
 
     // Agar koi condition nahi, return null
