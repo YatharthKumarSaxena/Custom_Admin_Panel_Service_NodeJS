@@ -1,4 +1,5 @@
 const { UserModel } = require("@models/user.model");
+const { OrganizationUserModel } = require("@models/organizational-user.model");
 const { logWithTime } = require("@utils/time-stamps.util");
 const { logActivityTrackerEvent } = require("@/services/audit/activity-tracker.service");
 const { ACTIVITY_TRACKER_EVENTS } = require("@configs/tracker.config");
@@ -14,6 +15,39 @@ const { createClientInSoftwareManagementService } = require("./create-client.ser
 const { checkOrgExists } = require("../organizations/check-org-exists.service");
 
 /**
+ * Find all organizations to which a user belongs
+ * @param {string} userId - User's custom ID (USR format)
+ * @returns {Promise<Array>} Array of organization IDs
+ */
+const findUserOrganizations = async (userId) => {
+    try {
+        logWithTime(`🔍 Finding organizations for user ${userId}...`);
+
+        // First, get the user's MongoDB _id
+        const user = await UserModel.findOne({ userId });
+        if (!user) {
+            logWithTime(`❌ User not found: ${userId}`);
+            return [];
+        }
+
+        // Find all active organization memberships for this user
+        const orgMemberships = await OrganizationUserModel.find({
+            userId: user._id,
+            deletedAt: null  // Only active memberships
+        }).select('organizationId');
+
+        const organizationIds = orgMemberships.map(org => org.organizationId.toString());
+        logWithTime(`✅ Found ${organizationIds.length} organizations for user ${userId}`);
+
+        return organizationIds;
+    } catch (error) {
+        logWithTime(`❌ Error finding user organizations: ${error.message}`);
+        errorMessage(error);
+        return [];
+    }
+};
+
+/**
  * Convert User to Client Service
  * 
  * NOTE: IDs now use unified USR prefix - ID remains the same, only userType changes
@@ -21,7 +55,8 @@ const { checkOrgExists } = require("../organizations/check-org-exists.service");
  * Flow:
  * 1. Call Auth Service to convert user to client (updates userType in Auth DB)
  * 2. Update local Admin Panel DB with new client details
- * 3. Call Software Management Service to create client record
+ * 3. Find all organizations the user belongs to
+ * 4. Call Software Management Service to create client record with organization IDs
  * 
  * @param {Object} creator - Admin performing the conversion
  * @param {Object} data - {user, convertReason, reasonDescription, role, organizationIds}
@@ -36,13 +71,14 @@ const convertUserToClientService = async (creator, { user, convertReason, reason
         
         logWithTime(`🔄 Starting user to client conversion for ${userId}...`);
 
-        const checkOrgIds = await checkOrgExists(organizationIds);
-        if (!checkOrgIds) {
-            return {
-                success: false,
-                type: AdminErrorTypes.INVALID_DATA,
-                message: "One or more organization IDs are invalid"
-            };
+        // Auto-discover user's organizations instead of relying on passed organisationIds
+        // This ensures we only assign organizations the user actually belongs to
+        const userOrganizations = await findUserOrganizations(userId);
+        
+        if (userOrganizations.length === 0) {
+            logWithTime(`⚠️  User ${userId} does not belong to any organizations`);
+        } else {
+            logWithTime(`✅ Will assign user to ${userOrganizations.length} organization(s)`);
         }
 
         // Step 1: Get service token
@@ -115,11 +151,12 @@ const convertUserToClientService = async (creator, { user, convertReason, reason
         logWithTime(`✅ User updated in Admin Panel DB: ${userId}`);
 
         // Step 4: Create client in Software Management Service (fire and forget)
+        // Pass the user's actual organization memberships, not the ones provided in request
         createClientInSoftwareManagementService(
             updateResult,
             updateResult.firstName,
             role,
-            organizationIds
+            userOrganizations
         );
 
         // Step 5: Prepare audit data and log activity
