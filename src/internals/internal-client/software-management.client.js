@@ -74,6 +74,99 @@ const healthCheck = async () => {
     }
 };
 
+/**
+ * Toggle block status for a user (Fire and Forget)
+ * Makes async call to Software Management Service without waiting for response
+ * 
+ * @param {string} userId - The user ID to toggle block status
+ * @param {string} adminId - The admin ID initiating the action
+ * @param {boolean} isBlocked - The new block status
+ * @param {string} requestId - Request ID for tracking
+ * @returns {void} - Fire and forget, doesn't return anything
+ */
+const toggleBlockUserStatus = async (userId, adminId, type, isBlocked, requestId) => {
+    try {
+        logWithTime(`🔄 Sending toggle block user status to Software Management Service for ${userId}...`);
+        
+        const client = await getSoftwareManagementClient();
+        
+        // Fire and forget - don't await the result
+        (async () => {
+            try {
+                const uri = SOFTWARE_MANAGEMENT_URIS.TOGGLE_BLOCK_USER_STATUS.uri.replace(':userId', userId);
+                const result = await client.callService({
+                    method: SOFTWARE_MANAGEMENT_URIS.TOGGLE_BLOCK_USER_STATUS.method,
+                    uri: uri,
+                    body: {
+                        type: type,
+                        adminId: adminId,
+                        isBlocked: isBlocked,
+                        requestId: requestId
+                    }
+                });
+
+                if (result.success) {
+                    logWithTime(`✅ Software Management Service updated block status for ${userId}`);
+                } else {
+                    logWithTime(`⚠️  Software Management Service failed to update block status: ${result.error}`);
+                }
+            } catch (err) {
+                logWithTime(`❌ Error in fire-and-forget toggle block user: ${err.message}`);
+            }
+        })();
+        
+    } catch (error) {
+        logWithTime(`❌ Failed to send toggle block user status to Software Management Service: ${error.message}`);
+    }
+};
+
+/**
+ * Toggle block status for a device (Fire and Forget)
+ * Makes async call to Software Management Service without waiting for response
+ * 
+ * @param {string} userId - The user ID whose device is being toggled
+ * @param {string} adminId - The admin ID initiating the action
+ * @param {boolean} isBlocked - The new block status
+ * @param {string} requestId - Request ID for tracking
+ * @returns {void} - Fire and forget, doesn't return anything
+ */
+const toggleBlockDeviceStatus = async (deviceUUID, adminId, isBlocked, requestId) => {
+    try {
+        logWithTime(`🔄 Sending toggle block device status to Software Management Service for ${deviceUUID}...`);
+        
+        const client = await getSoftwareManagementClient();
+        
+        // Fire and forget - don't await the result
+        (async () => {
+            try {
+                const uri = SOFTWARE_MANAGEMENT_URIS.TOGGLE_BLOCK_DEVICE_STATUS.uri.replace(':deviceUUID', deviceUUID);
+                const result = await client.callService({
+                    method: SOFTWARE_MANAGEMENT_URIS.TOGGLE_BLOCK_DEVICE_STATUS.method,
+                    uri: uri,
+                    body: {
+                        adminId: adminId,
+                        isBlocked: isBlocked,
+                        requestId: requestId
+                    }
+                });
+
+                if (result.success) {
+                    logWithTime(`✅ Software Management Service updated device block status for ${deviceUUID}`);
+                } else {
+                    logWithTime(`⚠️  Software Management Service failed to update device block status: ${result.error}`);
+                }
+            } catch (err) {
+                logWithTime(`❌ Error in fire-and-forget toggle block device: ${err.message}`);
+            }
+        })();
+        
+    } catch (error) {
+        logWithTime(`❌ Failed to send toggle block device status to Software Management Service: ${error.message}`);
+    }
+};
+
 module.exports = {
-    healthCheck
+    healthCheck,
+    toggleBlockUserStatus,
+    toggleBlockDeviceStatus
 };
