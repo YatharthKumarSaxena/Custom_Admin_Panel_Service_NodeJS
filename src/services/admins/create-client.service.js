@@ -1,6 +1,7 @@
 // CREATE CLIENT SERVICE
 
 const { UserModel } = require("@models/user.model");
+const { OrganizationUserModel } = require("@models/organizational-user.model");
 const { logWithTime } = require("@utils/time-stamps.util");
 const { logActivityTrackerEvent } = require("@/services/audit/activity-tracker.service");
 const { ACTIVITY_TRACKER_EVENTS } = require("@configs/tracker.config");
@@ -63,10 +64,56 @@ const createClientInSoftwareManagementService = async (client, firstName, role, 
     }
 }
 
+/**
+ * Validate that user belongs to provided organizations
+ * @param {string} userId - User ID
+ * @param {Array} orgIds - Organization IDs to validate
+ * @returns {Promise<boolean>} True if user belongs to all organizations
+ */
+const validateUserBelongsToOrganizations = async (userId, orgIds) => {
+    try {
+        if (!orgIds || orgIds.length === 0) {
+            logWithTime(`✅ No organization IDs provided, skipping org membership validation`);
+            return true;
+        }
+
+        logWithTime(`🔄 Validating user belongs to provided organizations...`);
+
+        // Find the user's _id first (orgIds use ObjectId)
+        const user = await UserModel.findOne({ userId });
+        if (!user) {
+            logWithTime(`❌ User not found: ${userId}`);
+            return false;
+        }
+
+        // Check if user belongs to all provided organizations
+        for (const orgId of orgIds) {
+            const orgUser = await OrganizationUserModel.findOne({
+                userId: user._id,
+                organizationId: orgId,
+                deletedAt: null  // Not deleted
+            });
+
+            if (!orgUser) {
+                logWithTime(`❌ User ${userId} does not belong to organization ${orgId}`);
+                return false;
+            }
+        }
+
+        logWithTime(`✅ User ${userId} belongs to all provided organizations`);
+        return true;
+    } catch (error) {
+        logWithTime(`❌ Error validating user org membership: ${error.message}`);
+        errorMessage(error);
+        return false;
+    }
+};
+
 const createClientService = async (creatorAdmin, clientData, device, requestId) => {
     try {
         const { firstName, creationReason, reasonDescription = undefined, email, password, countryCode, localNumber, phone, role, orgIds } = clientData;
 
+        // Validate organizations exist
         const checkOrgIds = await checkOrgExists(orgIds);
         if (!checkOrgIds) {
             return {
@@ -75,6 +122,10 @@ const createClientService = async (creatorAdmin, clientData, device, requestId) 
                 message: "One or more organization IDs are invalid"
             };
         }
+
+        // NOTE: Organization membership validation happens AFTER user is created in Auth Service
+        // because at this point, the user might not exist in our DB yet
+        // The validation will be done after we get the clientId from Auth Service
 
         // Create Client In Auth Service and get Client Id
         logWithTime(`🔄 Creating client account in Auth Service...`);
@@ -126,6 +177,16 @@ const createClientService = async (creatorAdmin, clientData, device, requestId) 
         }
 
         logWithTime(`✅ Client account created in Auth Service: ${clientId}`);
+
+        // Validate that the new client belongs to provided organizations
+        const userBelongsToOrgs = await validateUserBelongsToOrganizations(clientId, orgIds);
+        if (!userBelongsToOrgs) {
+            return {
+                success: false,
+                type: AdminErrorTypes.INVALID_DATA,
+                message: "User does not belong to one or more provided organizations. Please ensure the user is added to these organizations first."
+            };
+        }
 
         // Upsert client: Update if SYNC_USER already created it, or Insert if it doesn't exist yet
         const newClient = await UserModel.findOneAndUpdate(
