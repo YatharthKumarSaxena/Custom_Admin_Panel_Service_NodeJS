@@ -72,6 +72,14 @@ const SOFTWARE_MANAGEMENT_URIS = {
     CREATE_USER: {
         method: requestMethod.POST,
         uri: "/software-management-service/api/v1/internal/create-user"
+    },
+    TOGGLE_BLOCK_USER_STATUS: {
+        method: requestMethod.PATCH,
+        uri: "/software-management-service/api/v1/internal/toggle-block-user/:userId"
+    },
+    TOGGLE_BLOCK_DEVICE_STATUS: {
+        method: requestMethod.PATCH,
+        uri: "/software-management-service/api/v1/internal/toggle-block-device/:deviceUUID"
     }
 };
 
