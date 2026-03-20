@@ -5,6 +5,9 @@ const { ACTIVITY_TRACKER_EVENTS } = require("@configs/tracker.config");
 const { OrganizationUserErrorTypes } = require("@/configs/service-error.config");
 const { DB_COLLECTIONS } = require("@/configs/db-collections.config");
 const { prepareAuditData, cloneForAudit } = require("@utils/audit-data.util");
+const { updateOrganizationsInClient } = require("@/internals/internal-client/software-management.client");
+const { UserModel } = require("@/models");
+const { TotalTypes } = require("@/configs/enums.config");
 
 /**
  * Delete Organization User Service (Soft Delete)
@@ -44,6 +47,12 @@ const deleteOrgUserService = async (deleterAdmin, orgUserId, oldOrgUser, device,
     }
 
     logWithTime(`✅ Organization user deleted: ${orgUserId}`);
+
+    const user = await UserModel.findById(deletedOrgUser.userId);
+
+    if (user.userType === TotalTypes.CLIENT) {
+      updateOrganizationsInClient(user.userId, deleterAdmin.adminId, deletedOrgUser.organizationId.toString(), null, requestId);
+    }
 
     // Prepare audit data (old vs deleted state)
     const { oldData, newData } = prepareAuditData(oldOrgUserClone, deletedOrgUser);

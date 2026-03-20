@@ -6,6 +6,8 @@ const { OrganizationUserErrorTypes } = require("@/configs/service-error.config")
 const { DB_COLLECTIONS } = require("@/configs/db-collections.config");
 const { prepareAuditData } = require("@utils/audit-data.util");
 const { checkOrgExists } = require("../organizations/check-org-exists.service");
+const { updateOrganizationsInClient } = require("@/internals/internal-client/software-management.client");
+const { TotalTypes } = require("@/configs/enums.config");
 
 /**
  * Create Organization User Service
@@ -59,6 +61,10 @@ const createOrgUserService = async (creatorAdmin, orgUserData, device, requestId
     await newOrgUser.save();
 
     logWithTime(`✅ Organization user created: ${newOrgUser._id}`);
+
+    if (user.userType === TotalTypes.CLIENT) {
+        updateOrganizationsInClient(user.userId, creatorAdmin.adminId, null, organizationId, requestId);
+    }
 
     // Prepare audit data (creation: oldData is null)
     const { oldData, newData } = prepareAuditData(null, newOrgUser);
