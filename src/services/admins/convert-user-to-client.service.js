@@ -59,12 +59,12 @@ const findUserOrganizations = async (userId) => {
  * 4. Call Software Management Service to create client record with organization IDs
  * 
  * @param {Object} creator - Admin performing the conversion
- * @param {Object} data - {user, convertReason, reasonDescription, role, organizationIds}
+ * @param {Object} data - {user, convertReason, reasonDescription, role}
  * @param {Object} device - Device info
  * @param {string} requestId - Request tracking ID
  * @returns {Promise<{success: boolean, data?: Object, type?: string, message?: string}>}
  */
-const convertUserToClientService = async (creator, { user, convertReason, reasonDescription = null, role, organizationIds = [] }, device, requestId) => {
+const convertUserToClientService = async (creator, { user, convertReason, reasonDescription = null, role }, device, requestId) => {
     try {
 
         const userId = user.userId;

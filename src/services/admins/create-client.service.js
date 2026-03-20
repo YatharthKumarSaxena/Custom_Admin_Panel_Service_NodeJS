@@ -49,7 +49,7 @@ const createClientInSoftwareManagementService = async (client, firstName, role, 
                 firstName,
                 id,
                 role,
-                orgIds
+                organizationIds: orgIds
             }
         });
 
