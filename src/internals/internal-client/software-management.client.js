@@ -165,8 +165,56 @@ const toggleBlockDeviceStatus = async (deviceUUID, adminId, isBlocked, requestId
     }
 };
 
+/**
+ * Toggle block status for a device (Fire and Forget)
+ * Makes async call to Software Management Service without waiting for response
+ * 
+ * @param {string} userId - The user ID whose device is being toggled
+ * @param {string} adminId - The admin ID initiating the action
+ * @param {string} removedOrgId - The organization ID being removed (if applicable)
+ * @param {string} addedOrgId - The organization ID being added
+ * @param {string} requestId - Request ID for tracking
+ * @returns {void} - Fire and forget, doesn't return anything
+ */
+const updateOrganizationsInClient = async (clientId, adminId, removedOrgId, addedOrgId, requestId) => {
+    try {
+        logWithTime(`🔄 Sending update organizations request to Software Management Service for ${clientId}...`);
+        
+        const client = await getSoftwareManagementClient();
+        
+        // Fire and forget - don't await the result
+        (async () => {
+            try {
+                const uri = SOFTWARE_MANAGEMENT_URIS.UPDATE_ORGANIZATIONS_IN_CLIENT.uri.replace(':clientId', clientId);
+                const result = await client.callService({
+                    method: SOFTWARE_MANAGEMENT_URIS.UPDATE_ORGANIZATIONS_IN_CLIENT.method,
+                    uri: uri,
+                    body: {
+                        removedOrgId: removedOrgId,
+                        addedOrgId: addedOrgId,
+                        adminId: adminId,
+                        requestId: requestId
+                    }
+                });
+
+                if (result.success) {
+                    logWithTime(`✅ Software Management Service updated organizations for ${clientId}`);
+                } else {
+                    logWithTime(`⚠️  Software Management Service failed to update organizations: ${result.error}`);
+                }
+            } catch (err) {
+                logWithTime(`❌ Error in fire-and-forget update organizations: ${err.message}`);
+            }
+        })();
+        
+    } catch (error) {
+        logWithTime(`❌ Failed to send update organizations request to Software Management Service: ${error.message}`);
+    }
+};
+
 module.exports = {
     healthCheck,
     toggleBlockUserStatus,
-    toggleBlockDeviceStatus
+    toggleBlockDeviceStatus,
+    updateOrganizationsInClient
 };
