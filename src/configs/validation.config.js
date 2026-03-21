@@ -20,7 +20,8 @@ const {
     orgNameLength,
     localNumberLength,
     countryCodeLength,
-    urlLength
+    urlLength,
+    descriptionLength
 } = require("./fields-length.config");
 
 const {
@@ -46,7 +47,8 @@ const {
     BlockUserReasonsHelper,
     UnblockUserReasonsHelper,
     BlockDeviceReasonsHelper,
-    UnblockDeviceReasonsHelper
+    UnblockDeviceReasonsHelper,
+    ViewActivityTrackerReasonsHelper
 } = require("@utils/enum-validators.util");
 
 const validationRules = {
@@ -161,6 +163,12 @@ const validationRules = {
     },
     orgUserEnableReason: {
         enum: OrganizationalUserEnableReasonsHelper
+    },
+    description: {
+        length: descriptionLength
+    },
+    adminActivityViewReason: {
+        enum: ViewActivityTrackerReasonsHelper
     }
 };
 

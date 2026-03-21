@@ -35,7 +35,9 @@ const requiredFields = {
     updateOrganizationalUserField: getRequiredFields(FieldDefinitions.UPDATE_ORG_USER),
     deleteOrganizationalUserField: getRequiredFields(FieldDefinitions.DELETE_ORG_USER),
     disableOrganizationalUserField: getRequiredFields(FieldDefinitions.DISABLE_ORG_USER),
-    enableOrganizationalUserField: getRequiredFields(FieldDefinitions.ENABLE_ORG_USER)
+    enableOrganizationalUserField: getRequiredFields(FieldDefinitions.ENABLE_ORG_USER),
+
+    getAdminActivitiesField: getRequiredFields(FieldDefinitions.GET_ADMIN_ACTIVITIES)
 };
 module.exports = {
     requiredFields

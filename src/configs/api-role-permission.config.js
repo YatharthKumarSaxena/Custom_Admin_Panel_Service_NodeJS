@@ -47,6 +47,17 @@ const ADMIN_ROUTE_AUTHORIZATION = {
 
 };
 
+const ACTIVITY_TRACKER_ROUTE_AUTHORIZATION = {
+    /* ---------------- Activity Tracker Routes ---------------- */
+
+    LIST_ACTIVITIES: [
+        AdminTypes.SUPER_ADMIN,
+        AdminTypes.OPERATIONS_ADMIN,
+        AdminTypes.SUPPORT_ADMIN,
+        AdminTypes.AUDIT_ADMIN
+    ]
+};
+
 const DEVICE_ROUTE_AUTHORIZATION = {
     BLOCK_DEVICE: [
         AdminTypes.SUPER_ADMIN,
@@ -168,6 +179,7 @@ const ORGANIZATION_ROUTE_AUTHORIZATION = {
 
 module.exports = {
     ADMIN_ROUTE_AUTHORIZATION,
+    ACTIVITY_TRACKER_ROUTE_AUTHORIZATION,
     ORGANIZATION_ROUTE_AUTHORIZATION,
     DEVICE_ROUTE_AUTHORIZATION,
     USER_ROUTE_AUTHORIZATION

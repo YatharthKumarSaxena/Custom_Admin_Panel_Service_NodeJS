@@ -12,6 +12,7 @@ const ADMIN_BASE = `${API_PREFIX}/admins`; // /admin-panel-service/api/v1/admins
 const ORGANIZATION_BASE = `${API_PREFIX}/organizations`; // /admin-panel-service/api/v1/organizations
 const USER_BASE = `${API_PREFIX}/users`; // /admin-panel-service/api/v1/users
 const DEVICE_BASE = `${API_PREFIX}/devices`; // /admin-panel-service/api/v1/devices
+const ACTIVITY_TRACKER_BASE = `${API_PREFIX}/activity-trackers`; // /admin-panel-service/api/v1/activity-trackers
 
 module.exports = {
     ADMIN_BASE: ADMIN_BASE,
@@ -19,6 +20,7 @@ module.exports = {
     ORG_BASE: ORGANIZATION_BASE,
     USER_BASE: USER_BASE,
     DEVICE_BASE: DEVICE_BASE,
+    ACTIVITY_TRACKER_BASE: ACTIVITY_TRACKER_BASE,
     INTERNAL_ROUTES: {
         CREATE_SUPER_ADMIN: `/create-super-admin`, // /admin-panel-service/api/v1/internal/create-super-admin
         PROVIDE_HEALTH_CHECK_TO_AUTH_SERVICE: `/auth/health`, // /admin-panel-service/api/v1/internal/auth/health
@@ -62,5 +64,10 @@ module.exports = {
     DEVICE_ROUTES: {
         BLOCK_DEVICE: `/block`, // /admin-panel-service/api/v1/devices/block
         UNBLOCK_DEVICE: `/unblock` // /admin-panel-service/api/v1/devices/unblock
+    },
+    ACTIVITY_TRACKER_ROUTES: {
+        GET_ADMIN_ACTIVITIES: `/admin-activities`, // /admin-panel-service/api/v1/activity-trackers/admin-activities
+        LIST_ACTIVITIES: `/list`, // /admin-panel-service/api/v1/activity-trackers/list
+        GET_MY_ACTIVITIES: `/my-activities` // /admin-panel-service/api/v1/activity-trackers/my-activities
     }
 };

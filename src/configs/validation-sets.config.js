@@ -35,7 +35,8 @@ const validationSets = {
     updateOrganizationalUser: getValidationSet(FieldDefinitions.UPDATE_ORG_USER),
     deleteOrganizationalUser: getValidationSet(FieldDefinitions.DELETE_ORG_USER),
     disableOrganizationalUser: getValidationSet(FieldDefinitions.DISABLE_ORG_USER),
-    enableOrganizationalUser: getValidationSet(FieldDefinitions.ENABLE_ORG_USER)
+    enableOrganizationalUser: getValidationSet(FieldDefinitions.ENABLE_ORG_USER),
+    getAdminActivities: getValidationSet(FieldDefinitions.GET_ADMIN_ACTIVITIES)
 };
 
 module.exports = {

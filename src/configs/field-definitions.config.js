@@ -486,6 +486,26 @@ const FieldDefinitions = {
             description: "Additional details about the reason for unblocking this device"
         }
     },
+    GET_ADMIN_ACTIVITIES: {
+        ADMIN_ID: {
+            field: "userId",
+            required: true,
+            validation: validationRules.adminId,
+            description: "ID of the admin whose activities to retrieve"
+        },
+        REASON: {
+            field: "reason",
+            required: true,
+            validation: validationRules.adminActivityViewReason,
+            description: "Reason for viewing this admin's activities"
+        },
+        REASON_DESCRIPTION: {
+            field: "reasonDescription",
+            required: false,
+            validation: validationRules.description,
+            description: "Additional details about the reason for viewing activities"
+        }
+    }
     // Future endpoints can be added here following the same structure
 };
 

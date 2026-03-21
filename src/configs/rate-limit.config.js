@@ -181,6 +181,27 @@ module.exports = {
       prefix: "list_org_users",
       reason: "Excessive organization user listing attempts",
       message: "You have exceeded the maximum number of organization user listing attempts. Please try again later."
+    },
+    getAdminActivities: {
+      maxRequests: 100,
+      windowMs: 60 * 60 * 1000, // 1 hour
+      prefix: "get_admin_activities",
+      reason: "Excessive admin activity retrieval attempts",
+      message: "You have exceeded the maximum number of admin activity retrieval attempts. Please try again later."
+    },
+    listActivities: {
+      maxRequests: 100,
+      windowMs: 60 * 60 * 1000, // 1 hour
+      prefix: "list_activities",
+      reason: "Excessive activity listing attempts",
+      message: "You have exceeded the maximum number of activity listing attempts. Please try again later."
+    },
+    getMyActivities: {
+      maxRequests: 100,
+      windowMs: 60 * 60 * 1000, // 1 hour
+      prefix: "get_my_activities",
+      reason: "Excessive own activity retrieval attempts",
+      message: "You have exceeded the maximum number of own activity retrieval attempts. Please try again later."
     }
   }
 };
