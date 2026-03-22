@@ -10,8 +10,10 @@ const { firstNameValidator } = require("./first-name.middleware");
 const { isUserAccountActive } = require("./is-user-account-active.middleware");
 const { isUserAccountBlocked } = require("./is-user-blocked.middleware");
 const { convertUserToClientMiddleware } = require("./validate-type-transition.middleware");
+const { corsMiddleware } = require("./cors.middleware");
 
 const commonMiddlewares = {
+    corsMiddleware,
     requestIdMiddleware,
     isDeviceBlocked,
     verifyDeviceField,
