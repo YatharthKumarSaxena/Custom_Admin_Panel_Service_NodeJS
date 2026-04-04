@@ -11,5 +11,8 @@ module.exports = {
     strongPasswordRegex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&^])[A-Za-z\d@$!%*#?&^ ]{8,}$/,
     urlRegex: /^(https?:\/\/)?([\w\d\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/,
     orgRoleRegex: /^[a-zA-Z\s-]+$/,
-    orgNameRegex: /^[a-zA-Z0-9\s.&()-]+$/
+    orgNameRegex: /^[a-zA-Z0-9\s.&()-]+$/,
+    googleDriveRegex: /^https:\/\/drive\.google\.com\/(file\/d\/[a-zA-Z0-9_-]+|open\?id=[a-zA-Z0-9_-]+|uc\?id=[a-zA-Z0-9_-]+|drive\/folders\/[a-zA-Z0-9_-]+)(\/.*)?$/,
+    uploadRegex: /\.(pdf|jpeg|jpg|png|webp)$/i,
+    fileUrlRegex: /^https?:\/\/localhost:\d+\/uploads\/[^\/\s]+\.(pdf|jpeg|jpg|png|webp)$/i
 }

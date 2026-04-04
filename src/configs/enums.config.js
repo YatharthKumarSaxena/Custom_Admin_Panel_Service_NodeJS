@@ -156,6 +156,19 @@ const ClientTypes = Object.freeze({
     MULTI_ORGANIZATION: "multi_organization"
 });
 
+const ClientConversionRequestTypes = Object.freeze({
+  INDIVIDUAL: "individual",
+  SINGLE_ORGANIZATION: "single_organization",
+  MULTIPLE_ORGANIZATIONS: "multiple_organizations"
+});
+
+const ClientConversionRequestStatuses = Object.freeze({
+  PENDING: "PENDING",
+  APPROVED: "APPROVED",
+  REJECTED: "REJECTED",
+  WITHDRAWN: "WITHDRAWN"
+});
+
 const AdminRoleTypes = Object.freeze({
   BUSINESS_ANALYST: "business_analyst",
   DEVELOPER: "developer",
@@ -187,6 +200,23 @@ const OrganizationTypes = Object.freeze({
     OTHER: "OTHER"
 });
 
+const OrganizationStatuses = Object.freeze({
+    ACTIVE: "ACTIVE",
+    ARCHIVED: "ARCHIVED",
+    SUSPENDED: "SUSPENDED"
+});
+
+const ProofDocumentTypes = Object.freeze({
+    PDF: "PDF",
+    IMAGE: "IMAGE",
+    OTHER: "OTHER"
+});
+
+const ProofDocumentSources = Object.freeze({
+    UPLOAD: "UPLOAD",
+    GOOGLE_DRIVE: "GOOGLE_DRIVE"
+});
+
 module.exports = {
   AdminTypes,
   RoleHierarchy,
@@ -210,8 +240,13 @@ module.exports = {
   OverrideType,
   ClientStatus,
   ClientTypes,
+  ClientConversionRequestTypes,
+  ClientConversionRequestStatuses,
   AdminRoleTypes,
   ClientRoleTypes,
   TotalTypes,
-  OrganizationTypes
+  OrganizationTypes,
+  OrganizationStatuses,
+  ProofDocumentTypes,
+  ProofDocumentSources
 };

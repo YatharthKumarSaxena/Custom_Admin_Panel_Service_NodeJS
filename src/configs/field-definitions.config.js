@@ -505,6 +505,32 @@ const FieldDefinitions = {
             validation: validationRules.description,
             description: "Additional details about the reason for viewing activities"
         }
+    },
+    CREATE_CLIENT_CONVERSION_REQUEST: {
+        USER_ID: {
+            field: "userId",
+            required: true,
+            validation: validationRules.userId,
+            description: "ID of the user requesting client conversion"
+        },
+        REQUEST_TYPE: {
+            field: "requestType",
+            required: true,
+            validation: validationRules.clientConversionRequestType,
+            description: "Request mode: single_organization or multiple_organizations"
+        },
+        CONVERSION_REASON: {
+            field: "conversionReason",
+            required: true,
+            validation: validationRules.clientConversionRequestReason,
+            description: "Reason for raising client conversion request"
+        },
+        REASON_DESCRIPTION: {
+            field: "reasonDescription",
+            required: false,
+            validation: validationRules.description,
+            description: "Additional details about conversion request reason"
+        }
     }
     // Future endpoints can be added here following the same structure
 };

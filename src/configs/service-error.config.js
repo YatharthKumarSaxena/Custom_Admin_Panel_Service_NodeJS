@@ -28,7 +28,17 @@ const OrganizationUserErrorTypes = Object.freeze({
   INTERNAL_SERVICE_ERROR: "INTERNAL_SERVICE_ERROR"
 });
 
+const ClientConversionRequestErrorTypes = Object.freeze({
+  CONFLICT: "CONFLICT",
+  NOT_FOUND: "NOT_FOUND",
+  UNAUTHORIZED: "UNAUTHORIZED",
+  INVALID_DATA: "INVALID_DATA",
+  ALREADY_EXISTS: "ALREADY_EXISTS",
+  INTERNAL_SERVICE_ERROR: "INTERNAL_SERVICE_ERROR"
+});
+
 module.exports = {
   OrganizationErrorTypes,
-  OrganizationUserErrorTypes
+  OrganizationUserErrorTypes,
+  ClientConversionRequestErrorTypes
 };

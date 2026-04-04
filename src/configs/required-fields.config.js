@@ -37,7 +37,9 @@ const requiredFields = {
     disableOrganizationalUserField: getRequiredFields(FieldDefinitions.DISABLE_ORG_USER),
     enableOrganizationalUserField: getRequiredFields(FieldDefinitions.ENABLE_ORG_USER),
 
-    getAdminActivitiesField: getRequiredFields(FieldDefinitions.GET_ADMIN_ACTIVITIES)
+    getAdminActivitiesField: getRequiredFields(FieldDefinitions.GET_ADMIN_ACTIVITIES),
+
+    createClientConversionRequestField: getRequiredFields(FieldDefinitions.CREATE_CLIENT_CONVERSION_REQUEST)
 };
 module.exports = {
     requiredFields

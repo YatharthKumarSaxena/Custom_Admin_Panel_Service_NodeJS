@@ -8,7 +8,9 @@ const {
     localNumberRegex,
     countryCodeRegex,
     urlRegex,
-    UUID_V4_REGEX
+    UUID_V4_REGEX,
+    fileUrlRegex,
+    uploadRegex
 } = require("./regex.config");
 
 const {
@@ -48,7 +50,9 @@ const {
     UnblockUserReasonsHelper,
     BlockDeviceReasonsHelper,
     UnblockDeviceReasonsHelper,
-    ViewActivityTrackerReasonsHelper
+    ViewActivityTrackerReasonsHelper,
+    ClientConversionRequestReasonsHelper,
+    ClientConversionRequestTypesHelper
 } = require("@utils/enum-validators.util");
 
 const validationRules = {
@@ -169,6 +173,23 @@ const validationRules = {
     },
     adminActivityViewReason: {
         enum: ViewActivityTrackerReasonsHelper
+    },
+    clientConversionRequestType: {
+        enum: ClientConversionRequestTypesHelper
+    },
+    clientConversionRequestReason: {
+        enum: ClientConversionRequestReasonsHelper
+    },
+    designation: {
+        length: orgRoleLength,
+        regex: orgRoleRegex
+    },
+    proofDocument: {
+        length: urlLength,
+        regex: fileUrlRegex
+    },
+    uploadFileUrl: {
+        regex: uploadRegex
     }
 };
 

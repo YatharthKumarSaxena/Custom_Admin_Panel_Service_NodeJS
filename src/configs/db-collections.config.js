@@ -21,7 +21,8 @@ const DB_COLLECTIONS = {
     SERVICE_TRACKERS: "service_trackers",
     SERVICE_TOKENS: "service_tokens",
     ORGANIZATIONS: "organizations",
-    ORGANIZATION_USERS: "organization_users"
+    ORGANIZATION_USERS: "organization_users",
+    CLIENT_CONVERSION_REQUESTS: "client_conversion_requests"
 }
 
 module.exports = { DB_COLLECTIONS };

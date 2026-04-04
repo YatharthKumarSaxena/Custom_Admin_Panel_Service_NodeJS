@@ -378,6 +378,14 @@ const OrganizationalUserEnableReasons = Object.freeze({
   OTHER: "other"
 });
 
+const ClientConversionRequestReasons = Object.freeze({
+  ROLE_EXPANSION: "role_expansion",
+  PARTNERSHIP_REQUEST: "partnership_request",
+  EMPLOYMENT_VERIFICATION: "employment_verification",
+  BUSINESS_ONBOARDING: "business_onboarding",
+  OTHER: "other"
+});
+
 module.exports = {
   BlockUserReasons,
   UnblockUserReasons,
@@ -417,5 +425,6 @@ module.exports = {
   OrganizationalUserUpdateReasons,
   OrganizationalUserDeletionReasons,
   OrganizationalUserDisablitionReasons,
-  OrganizationalUserEnableReasons
+  OrganizationalUserEnableReasons,
+  ClientConversionRequestReasons
 };

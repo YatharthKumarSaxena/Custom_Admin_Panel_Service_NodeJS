@@ -202,6 +202,13 @@ module.exports = {
       prefix: "get_my_activities",
       reason: "Excessive own activity retrieval attempts",
       message: "You have exceeded the maximum number of own activity retrieval attempts. Please try again later."
+    },
+    createClientConversionRequest: {
+      maxRequests: 30,
+      windowMs: 60 * 60 * 1000, // 1 hour
+      prefix: "create_client_conversion_request",
+      reason: "Excessive client conversion request attempts",
+      message: "You have exceeded the maximum number of client conversion request attempts. Please try again later."
     }
   }
 };
