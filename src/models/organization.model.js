@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { customIdRegex, localNumberRegex, countryCodeRegex, emailRegex, urlRegex } = require("@configs/regex.config");
 const { DB_COLLECTIONS } = require("@/configs/db-collections.config");
 const { countryCodeLength, localNumberLength, orgNameLength, descriptionLength, urlLength } = require("@/configs/fields-length.config");
-const { OrganizationTypes } = require("@/configs/enums.config");
+const { OrganizationTypes, OrganizationStatuses } = require("@/configs/enums.config");
 
 
 const organizationSchema = new mongoose.Schema({
@@ -36,6 +36,12 @@ const organizationSchema = new mongoose.Schema({
         minlength: urlLength.min,
         maxlength: urlLength.max,
         match: urlRegex
+    },
+
+    status: {
+        type: String,
+        enum: Object.values(OrganizationStatuses),
+        default: OrganizationStatuses.ACTIVE
     },
 
     contactEmail: {
