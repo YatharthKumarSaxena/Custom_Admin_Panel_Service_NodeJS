@@ -2,6 +2,7 @@ const { adminSuccessResponses } = require("./admin.response");
 const { userSuccessResponses } = require("./user.response");
 const { deviceSuccessResponses } = require("./device.response");
 const { activityTrackerSuccessResponses } = require("./activity-tracker.response");
+const { createClientConversionRequestSuccessResponse } = require("./client-conversion-request.response");
 const {
     createOrgUserSuccessResponse,
     getOrgUserSuccessResponse,
@@ -16,6 +17,7 @@ const successResponses = {
     ...userSuccessResponses,
     ...deviceSuccessResponses,
     ...activityTrackerSuccessResponses,
+    createClientConversionRequestSuccessResponse,
     createOrgUserSuccessResponse,
     getOrgUserSuccessResponse,
     updateOrgUserSuccessResponse,
