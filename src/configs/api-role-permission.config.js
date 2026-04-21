@@ -20,9 +20,17 @@ const ADMIN_ROUTE_AUTHORIZATION = {
         AdminTypes.ORG_ADMIN
     ],
 
+    LIST_ADMIN: [
+        AdminTypes.SUPER_ADMIN,
+        AdminTypes.ORG_ADMIN,
+        AdminTypes.OPERATIONS_ADMIN,
+        AdminTypes.AUDIT_ADMIN
+    ],
+
     GET_ADMIN: [
         AdminTypes.SUPER_ADMIN,
-        AdminTypes.INTERNAL_ADMIN,
+        AdminTypes.ORG_ADMIN,
+        AdminTypes.OPERATIONS_ADMIN,
         AdminTypes.AUDIT_ADMIN
     ],
 
@@ -81,6 +89,20 @@ const USER_ROUTE_AUTHORIZATION = {
         AdminTypes.SUPER_ADMIN,
         AdminTypes.ORG_ADMIN,
         AdminTypes.OPERATIONS_ADMIN
+    ],
+
+    GET_USER: [
+        AdminTypes.SUPER_ADMIN,
+        AdminTypes.ORG_ADMIN,
+        AdminTypes.OPERATIONS_ADMIN,
+        AdminTypes.AUDIT_ADMIN
+    ],
+
+    LIST_USERS: [
+        AdminTypes.SUPER_ADMIN,
+        AdminTypes.ORG_ADMIN,
+        AdminTypes.OPERATIONS_ADMIN,
+        AdminTypes.AUDIT_ADMIN
     ]
 };
 
