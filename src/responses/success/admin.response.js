@@ -79,12 +79,30 @@ const unblockAdminSuccessResponse = (res, admin) => {
     });
 };
 
+const listAdminSuccessResponse = (res, data) => {
+    return res.status(OK).json({
+        success: true,
+        message: "Admins retrieved successfully.",
+        data: data
+    });
+};
+
+const getAdminSuccessResponse = (res, admin) => {
+    return res.status(OK).json({
+        success: true,
+        message: "Admin retrieved successfully.",
+        data: admin
+    });
+};
+
 const adminSuccessResponses = {
     createAdminSuccessResponse,
     createUserSuccessResponse,
     convertUserToClientSuccessResponse,
     blockAdminSuccessResponse,
-    unblockAdminSuccessResponse
+    unblockAdminSuccessResponse,
+    listAdminSuccessResponse,
+    getAdminSuccessResponse
 }
 
 module.exports = {
