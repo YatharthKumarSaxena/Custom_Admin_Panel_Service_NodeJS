@@ -8,7 +8,8 @@ const { blockUserRateLimiter, unblockUserRateLimiter } = require("@/rate-limiter
 const { ensureUserExists } = require("@/middlewares/users/fetch-user.middleware");
 const { userBlockUnblockPresenceMiddlewares } = require("@/middlewares/users/validate-request-body.middleware");
 const { userBlockUnblockValidationMiddlewares } = require("@/middlewares/users/field-validation.middleware");
-const { BLOCK_USER, UNBLOCK_USER } = USER_ROUTES;
+const { userRoleAuthorizeMiddlewares } = require("@/middlewares/users/role-authorize.middleware");
+const { BLOCK_USER, UNBLOCK_USER, LIST_USERS, GET_USER } = USER_ROUTES;
 
 userRouter.post(`${BLOCK_USER}`,
   [
@@ -29,6 +30,20 @@ userRouter.post(`${UNBLOCK_USER}`,
     ensureUserExists
   ],
   userControllers.unblockUser);
+
+userRouter.get(`${LIST_USERS}`,
+  [
+    ...baseAuthAdminMiddlewares,
+    userRoleAuthorizeMiddlewares.listUsersRoleAuthorizeMiddleware
+  ],
+  userControllers.listUsers);
+
+userRouter.get(`${GET_USER}`,
+  [
+    ...baseAuthAdminMiddlewares,
+    userRoleAuthorizeMiddlewares.getUserRoleAuthorizeMiddleware
+  ],
+  userControllers.getUser);
 
 module.exports = {
     userRouter
