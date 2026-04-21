@@ -33,9 +33,27 @@ const unblockUserSuccessResponse = (res, user) => {
     });
 };
 
+const listUsersSuccessResponse = (res, data) => {
+    return res.status(OK).json({
+        success: true,
+        message: "Users retrieved successfully.",
+        data: data
+    });
+};
+
+const getUserSuccessResponse = (res, user) => {
+    return res.status(OK).json({
+        success: true,
+        message: "User retrieved successfully.",
+        data: user
+    });
+};
+
 const userSuccessResponses = {
     blockUserSuccessResponse,
-    unblockUserSuccessResponse
+    unblockUserSuccessResponse,
+    listUsersSuccessResponse,
+    getUserSuccessResponse
 };
 
 module.exports = {
