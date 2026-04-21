@@ -8,7 +8,7 @@ const { adminControllers } = require("@/controllers/admins");
 const { createAdminRateLimiter, createClientRateLimiter, convertUserToClientRateLimiter, blockAdminRateLimiter, unblockAdminRateLimiter } = require("@/rate-limiters/general-api.rate-limiter");
 const { commonMiddlewares } = require("@/middlewares/common");
 const { ensureUserExists } = require("@/middlewares/users/fetch-user.middleware");
-const { CREATE_ADMIN, CREATE_CLIENT, CONVERT_USER_TO_CLIENT, BLOCK_ADMIN, UNBLOCK_ADMIN } = ADMIN_ROUTES;
+const { CREATE_ADMIN, CREATE_CLIENT, CONVERT_USER_TO_CLIENT, BLOCK_ADMIN, UNBLOCK_ADMIN, LIST_ADMIN, GET_ADMIN } = ADMIN_ROUTES;
 
 adminRouter.post(`${CREATE_ADMIN}`,
   [
@@ -73,6 +73,20 @@ adminRouter.post(`${UNBLOCK_ADMIN}`,
     adminMiddlewares.hierarchyGuard
   ],
   adminControllers.unblockAdmin);
+
+adminRouter.get(`${LIST_ADMIN}`,
+  [
+    ...baseAuthAdminMiddlewares,
+    adminMiddlewares.listAdminRoleAuthorizeMiddleware
+  ],
+  adminControllers.listAdmin);
+
+adminRouter.get(`${GET_ADMIN}`,
+  [
+    ...baseAuthAdminMiddlewares,
+    adminMiddlewares.getAdminRoleAuthorizeMiddleware
+  ],
+  adminControllers.getAdmin);
 
 module.exports = {
     adminRouter

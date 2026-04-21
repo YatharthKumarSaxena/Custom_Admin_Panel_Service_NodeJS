@@ -6,7 +6,9 @@ const adminRoleAuthorizeMiddlewares = {
     createClientRoleAuthorizeMiddleware: roleAuthorize(ADMIN_ROUTE_AUTHORIZATION.CREATE_CLIENT),
     convertUserToClientRoleAuthorizeMiddleware: roleAuthorize(ADMIN_ROUTE_AUTHORIZATION.CONVERT_USER_TO_CLIENT),
     blockAdminRoleAuthorizeMiddleware: roleAuthorize(ADMIN_ROUTE_AUTHORIZATION.BLOCK_ADMIN),
-    unblockAdminRoleAuthorizeMiddleware: roleAuthorize(ADMIN_ROUTE_AUTHORIZATION.UNBLOCK_ADMIN)
+    unblockAdminRoleAuthorizeMiddleware: roleAuthorize(ADMIN_ROUTE_AUTHORIZATION.UNBLOCK_ADMIN),
+    listAdminRoleAuthorizeMiddleware: roleAuthorize(ADMIN_ROUTE_AUTHORIZATION.LIST_ADMIN),
+    getAdminRoleAuthorizeMiddleware: roleAuthorize(ADMIN_ROUTE_AUTHORIZATION.GET_ADMIN)
 }
 
 module.exports = {

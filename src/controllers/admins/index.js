@@ -3,13 +3,17 @@ const { createClient } = require("./create-client.controller");
 const { convertUserToClient } = require("./convert-user-to-client.controller");
 const { blockAdmin } = require("./block-admin.controller");
 const { unblockAdmin } = require("./unblock-admin.controller");
+const { listAdmin } = require("./list-admin.controller");
+const { getAdmin } = require("./get-admin.controller");
 
 const adminControllers = {
     createAdmin,
     createClient,
     convertUserToClient,
     blockAdmin,
-    unblockAdmin
+    unblockAdmin,
+    listAdmin,
+    getAdmin
 }
 
 module.exports = {
