@@ -48,4 +48,4 @@ const { errorMessage } = require("@/responses/common/error-handler.response");
         errorMessage(err);
         process.exit(1);
     }
-})();
+})(); 
