@@ -33,7 +33,7 @@ const organizationUserSchema = new mongoose.Schema({
         match: emailRegex,
         minlength: emailLength.min,
         maxlength: emailLength.max,
-        required: true
+        required: false
     },
 
     proofDocument: {
