@@ -12,7 +12,7 @@ const { AUTH_SERVICE_URIS } = require("@/configs/internal-uri.config");
 const { INTERNAL_API, SERVICE_NAMES } = require("@/internals/constants");
 const { errorMessage } = require("@/utils/log-error.util");
 const { createClientInSoftwareManagementService } = require("./create-client.service");
-const { checkOrgExists } = require("../organizations/check-org-exists.service");
+const jwt = require("jsonwebtoken");
 
 /**
  * Find all organizations to which a user belongs
@@ -68,13 +68,13 @@ const convertUserToClientService = async (creator, { user, convertReason, reason
     try {
 
         const userId = user.userId;
-        
+
         logWithTime(`🔄 Starting user to client conversion for ${userId}...`);
 
         // Auto-discover user's organizations instead of relying on passed organisationIds
         // This ensures we only assign organizations the user actually belongs to
         const userOrganizations = await findUserOrganizations(userId);
-        
+
         if (userOrganizations.length === 0) {
             logWithTime(`⚠️  User ${userId} does not belong to any organizations`);
         } else {
@@ -122,7 +122,7 @@ const convertUserToClientService = async (creator, { user, convertReason, reason
 
         // Fetch old user data before conversion for audit
         const oldUser = await UserModel.findOne({ userId: userId });
-        
+
         if (!oldUser) {
             logWithTime(`❌ Failed to find user in Admin Panel DB`);
             return {
@@ -161,7 +161,7 @@ const convertUserToClientService = async (creator, { user, convertReason, reason
 
         // Step 5: Prepare audit data and log activity
         const { oldData, newData } = prepareAuditData(oldUserClone, updateResult);
-        
+
         logActivityTrackerEvent(
             creator,
             device,
